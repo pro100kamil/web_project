@@ -137,6 +137,7 @@ def about_user():
                            title='Личный кабинет', reg=False, form=form)
 
 
+# работа с постами
 @app.route('/posts/create', methods=['GET', 'POST'])
 @login_required
 def create_post():
@@ -156,11 +157,18 @@ def create_post():
         filename = f'post_{num_images}.jpg'
 
         if form.icon.data:
-            image: Image.Image = Image.open(form.icon.data)
-            image.thumbnail((200, 200))
-            image = image.convert('RGB')
-            image.save(os.path.join(path, filename))
-            post.icon = filename
+            # если прикреплённый файл является изображением
+            if form.icon.data.content_type.startswith('image'):
+                image: Image.Image = Image.open(form.icon.data)
+                image.thumbnail((200, 200))
+                image = image.convert('RGB')
+                image.save(os.path.join(path, filename))
+                post.icon = filename
+            else:
+                return render_template('add_edit_post.html',
+                                       title='Добавление поста',
+                                       message='Надо прекреплять изображение',
+                                       form=form, categories=categories)
 
         id_category = request.form['category']
         category = db_sess.query(Category).filter(Category.id == id_category).first()

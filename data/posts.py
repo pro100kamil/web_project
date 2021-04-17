@@ -12,14 +12,15 @@ class Post(SqlAlchemyBase, SerializerMixin):
                            primary_key=True, autoincrement=True)
     author_id = sqlalchemy.Column(sqlalchemy.Integer,
                                   sqlalchemy.ForeignKey('users.id'))
-    title = sqlalchemy.Column(sqlalchemy.String, default='Безымяный')
+    title = sqlalchemy.Column(sqlalchemy.String)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
 
     icon = sqlalchemy.Column(sqlalchemy.String, default='default.jpg')
 
+    user = orm.relation('User')
+
     categories = orm.relation("Category",
                               secondary="association",
                               backref="posts")
-
