@@ -14,3 +14,8 @@ td {
 .text-danger, .text-success {
     font-size: 25px;
 }
+
+img.card_img {
+text-align: center;
+margin-bottom: 30px;
+}
