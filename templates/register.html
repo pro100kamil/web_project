@@ -40,6 +40,10 @@
     {% endif %}
 
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-    <p class="text-danger">{{ message }}</p>
+    {% if message == 'Изменения сохранены' %}
+        <p class="text-success">{{ message }}</p>
+    {% else %}
+        <p class="text-danger">{{ message }}</p>
+    {% endif %}
 </form>
 {% endblock %}

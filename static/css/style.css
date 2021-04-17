@@ -1,0 +1,16 @@
+header {
+    background-color: #F5DEB3;
+}
+
+nav {
+    background-color: #FFDEAD;
+}
+
+td {
+    /*Многострочный текст внутри ячейки таблицы*/
+    white-space:pre;
+}
+
+.text-danger, .text-success {
+    font-size: 25px;
+}
