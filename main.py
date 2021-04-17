@@ -1,11 +1,16 @@
-from flask import Flask, render_template, redirect, abort, request
+from flask import Flask, render_template, redirect, abort, request, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
 
 from data import db_session, users_api
 from data.users import User
+from data.posts import Post
+from data.categories import Category
+from PIL import Image
+import os
 
 from forms.user import RegisterForm, LoginForm
+from forms.post import PostForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -130,6 +135,42 @@ def about_user():
                                message="Изменения сохранены")
     return render_template('register.html',
                            title='Личный кабинет', reg=False, form=form)
+
+
+@app.route('/posts/create', methods=['GET', 'POST'])
+@login_required
+def create_post():
+    form = PostForm()
+
+    db_sess = db_session.create_session()
+    categories = db_sess.query(Category).all()
+
+    if form.validate_on_submit():
+        post = Post()
+        post.author_id = current_user.id
+        post.title = form.title.data
+        post.content = form.content.data
+
+        path = 'static/img/thumbnails'
+        num_images = len(os.listdir(path)) - 1
+        filename = f'post_{num_images}.jpg'
+
+        if form.icon.data:
+            image: Image.Image = Image.open(form.icon.data)
+            image.thumbnail((200, 200))
+            image = image.convert('RGB')
+            image.save(os.path.join(path, filename))
+            post.icon = filename
+
+        id_category = request.form['category']
+        category = db_sess.query(Category).filter(Category.id == id_category).first()
+        post.categories.append(category)
+
+        db_sess.commit()
+        return redirect('/')
+
+    return render_template('add_edit_post.html', title='Добавление поста',
+                           form=form, categories=categories)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<form action="" method="post" enctype="multipart/form-data" class="login_form">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.title.label }}<br>
+        {{ form.title(class="form-control") }}<br>
+        {% for error in form.title.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.content.label }}<br>
+        {{ form.content(class="form-control") }}<br>
+        {% for error in form.content.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.icon.label }}<br>
+        {{ form.icon(class="form-control-file") }}<br>
+        {% for error in form.icon.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        <select class="form-control" id="choose_category" name="category">
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name
+                    }}</option>
+            {% endfor %}
+        </select>
+        <label class="form-check-label" for="choose_category">
+             Выберите категорию
+         </label>
+    </p>
+
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}

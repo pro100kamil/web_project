@@ -17,6 +17,8 @@ class Post(SqlAlchemyBase, SerializerMixin):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
 
+    icon = sqlalchemy.Column(sqlalchemy.String, default='default.jpg')
+
     categories = orm.relation("Category",
                               secondary="association",
                               backref="posts")
