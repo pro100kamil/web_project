@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 
 
+
 {% block content %}
 
 <form action="" method="post" class="form-inline">
     <input name="for_search" class="form-control">
+
+    <select name="kind" class="form-select" autofocus>
+        <option value="users">Пользователи</option>
+        <option value="posts">Посты</option>
+    </select>
+
     <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Поиск">
 </form>
     {% if users %}

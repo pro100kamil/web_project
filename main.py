@@ -347,14 +347,22 @@ def search_user():
 
     if request.method == 'GET':
         line = request.args.get('query', '')
-        users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
-                                           (User.surname.like(f'%{line}%'))).all()
+        kind = request.args.get('kind', 'users')
 
-        return render_template('search.html', users=users, title='Поиск: ' + line)
+        if kind == 'users':
+            users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
+                                               (User.surname.like(f'%{line}%'))).all()
+            return render_template('search_users.html', users=users,
+                                   title='Поиск пользователя: ' + line)
+        elif kind == 'posts':
+            posts = db_sess.query(Post).filter(Post.title.like(f'%{line}%')).all()
+            return render_template('search_posts.html', posts=posts,
+                                   title='Поиск поста: ' + line)
 
     elif request.method == 'POST':
         url_arg = request.form.get('for_search')
-        return redirect(url_for('search_user', query=url_arg))
+        kind = request.form.get('kind')
+        return redirect(url_for('search_user', query=url_arg, kind=kind))
 
 
 if __name__ == '__main__':
