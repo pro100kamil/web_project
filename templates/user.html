@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>{{ user.id }}</p>
+    <p>{{ user.surname }} {{ user.name }}</p>
+    <p>{{ user.email }}</p>
+    <p>{{ user.about }}</p>
+    <a class="btn btn-primary" href="/users/{{ user.id }}/subscribe">
+        Подписаться</a>
+{% endblock %}

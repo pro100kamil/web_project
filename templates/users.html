@@ -12,7 +12,7 @@
     {% for user in users %}
     <tr>
         <td>{{ user.id }}</td>
-        <td>{{ user.surname }} {{ user.name }}</td>
+        <td><a href="/users/{{ user.id }}">{{ user.surname }} {{ user.name }}</a></td>
         <td>{{ user.email }}</td>
         <td>{{ user.about }}</td>
         <td><a href="/posts/users/{{ user.id }}">Посмотреть его посты</a></td>

@@ -64,6 +64,31 @@ def all_users():
                            users=users)
 
 
+@app.route("/users/<int:id>")
+def user_by_id(id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).get(id)
+    if not user:
+        abort(404)
+    return render_template("user.html",
+                           title=f'{user.name} {user.surname}',
+                           user=user)
+
+
+@app.route("/users/<int:id>/subscribe")
+@login_required
+def subscribe(id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).get(id)
+    if not user:
+        abort(404)
+    print(f'{current_user.name} {current_user.surname} подписывается на'
+          f' {user.name} {user.surname}')
+    return render_template("user.html",
+                           title=f'{user.name} {user.surname}',
+                           user=user)
+
+
 # авторизация и тому подобное
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -157,7 +182,8 @@ def post_by_category(category):
         Category.name == category).first()
     posts = list(filter(lambda el: category in el.categories,
                         db_sess.query(Post).all()))[::-1]
-    return render_template("index.html", title='Мои посты', posts=posts)
+    return render_template("index.html",
+                           title=f'{category.name.capitalize()}', posts=posts)
 
 
 @app.route("/posts/users/<int:user_id>")
@@ -169,7 +195,7 @@ def post_by_user_id(user_id):
         abort(404)
     posts = db_sess.query(Post).filter(Post.author_id == user_id)[::-1]
     return render_template("index.html",
-                           title=f'Посты {user.name} + {user.surname}',
+                           title=f'Посты {user.name} {user.surname}',
                            posts=posts)
 
 
@@ -218,8 +244,7 @@ def create_post():
                                        form=form, categories=categories)
 
         id_category = request.form['category']
-        category = db_sess.query(Category).filter(
-            Category.id == id_category).first()
+        category = db_sess.query(Category).get(id_category)
         post.categories.append(category)
         db_sess.add(post)
         db_sess.commit()
