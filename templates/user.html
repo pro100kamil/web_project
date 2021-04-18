@@ -1,16 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <p>{{ user.id }}</p>
-    <p>{{ user.surname }} {{ user.name }}</p>
-    <p>{{ user.email }}</p>
-    <p>{{ user.about }}</p>
-    {% if not is_subscribed %}
-        <a class="btn btn-primary" href="/users/{{ user.id }}/subscribe">
-            Подписаться</a>
-    {% else %}
-        <a class="btn btn-danger" href="/users/{{ user.id }}/unsubscribe">
-            Отписаться</a>
-    {% endif %}
-
+<h3>{{ user.surname }} {{ user.name }}</h3>
+<p>{{ user.id }}</p>
+<p>{{ user.email }}</p>
+<p>{{ user.about }}</p>
+{% if not is_cur_user and not is_subscribed %}
+<a class="btn btn-primary" href="/users/{{ user.id }}/subscribe">
+    Подписаться</a>
+{% elif not is_cur_user %}
+<a class="btn btn-danger" href="/users/{{ user.id }}/unsubscribe">
+    Отписаться</a>
+{% endif %}
+<h3>Подписки</h3>
+<table class="table table-bordered">
+    {% for user1 in user.followed %}
+    <tr>
+        <td>
+            <a href="/users/{{ user1.id }}">{{ user1.surname }} {{ user1.name }}</a>
+        </td>
+        <td>
+            <a href="/posts/users/{{ user1.id }}">Посмотреть его посты</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}

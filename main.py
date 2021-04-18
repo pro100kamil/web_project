@@ -70,13 +70,12 @@ def user_by_id(id):
     user = db_sess.query(User).get(id)
     cur_user = db_sess.query(User).get(current_user.id)  # Текущий пользователь
 
-    is_subscribed = cur_user.is_following(user)
-
     if not user:
         abort(404)
     return render_template("user.html",
-                           title=f'{user.name} {user.surname}',
-                           user=user, is_subscribed=is_subscribed)
+                           title=f'{user.name} {user.surname}', user=user,
+                           is_subscribed=cur_user.is_following(user),
+                           is_cur_user=(id == current_user.id))
 
 
 @app.route("/users/<int:id>/subscribe")

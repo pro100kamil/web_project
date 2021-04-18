@@ -37,7 +37,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                                 lazy='dynamic')
 
     def follow(self, user):
-        if not self.is_following(user):
+        if user.id != self.id and not self.is_following(user):
             self.followed.append(user)
             return self
 
@@ -47,7 +47,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
             return self
 
     def is_following(self, user):
-        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+        return self.followed.filter(followers.c.followed_id == user.id).count()
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
