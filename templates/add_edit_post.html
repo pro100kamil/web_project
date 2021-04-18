@@ -32,7 +32,14 @@
         {% endfor %}
     </p>
     <p>
-        <select class="form-control" id="choose_category" name="category">
+        {{ form.category.label }}<br>
+        {{ form.category(class="form-control", id="choose_category") }}<br>
+        {% for error in form.category.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+        <!--<select multiple class="form-control" id="choose_category" name="category">
             {% for category in categories %}
                 <option value="{{ category.id }}">{{ category.name
                     }}</option>
@@ -40,7 +47,7 @@
         </select>
         <label class="form-check-label" for="choose_category">
              Выберите категорию
-         </label>
+         </label>-->
     </p>
 
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>

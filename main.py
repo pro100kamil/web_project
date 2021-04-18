@@ -68,11 +68,15 @@ def all_users():
 def user_by_id(id):
     db_sess = db_session.create_session()
     user = db_sess.query(User).get(id)
+    cur_user = db_sess.query(User).get(current_user.id)  # Текущий пользователь
+
+    is_subscribed = cur_user.is_following(user)
+
     if not user:
         abort(404)
     return render_template("user.html",
                            title=f'{user.name} {user.surname}',
-                           user=user)
+                           user=user, is_subscribed=is_subscribed)
 
 
 @app.route("/users/<int:id>/subscribe")
@@ -80,13 +84,34 @@ def user_by_id(id):
 def subscribe(id):
     db_sess = db_session.create_session()
     user = db_sess.query(User).get(id)
+    cur_user = db_sess.query(User).get(current_user.id)  # Текущий пользователь
+
     if not user:
         abort(404)
-    print(f'{current_user.name} {current_user.surname} подписывается на'
-          f' {user.name} {user.surname}')
-    return render_template("user.html",
-                           title=f'{user.name} {user.surname}',
-                           user=user)
+
+    # Не работает по неизвестной причине. Как и с постами current_user.posts.append(...)
+    # current_user.follow(user)
+    # db_sess.merge(current_user)
+    # db_sess.commit()
+
+    cur_user.follow(user)  # Текущий юзер подписывается на нужного
+    db_sess.commit()
+    return redirect('/users/' + str(id))
+
+
+@app.route("/users/<int:id>/unsubscribe")
+@login_required
+def unsubscribe(id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).get(id)
+    cur_user = db_sess.query(User).get(current_user.id)  # Текущий пользователь
+
+    if not user:
+        abort(404)
+
+    cur_user.unfollow(user)  # Текущий юзер подписывается на нужного
+    db_sess.commit()
+    return redirect('/users/' + str(id))
 
 
 # авторизация и тому подобное
@@ -170,7 +195,7 @@ def about_user():
 @login_required
 def posts_current_user():
     db_sess = db_session.create_session()
-    posts = db_sess.query(Post).filter(Post.author_id == current_user.id)[::-1]
+    posts = db_sess.query(Post).filter(Post.author == current_user)[::-1]
 
     return render_template("index.html", title='Мои посты', posts=posts)
 
@@ -206,6 +231,7 @@ def show_post(id):
     post = db_sess.query(Post).filter(Post.id == id).first()
     if not post:
         abort(404)
+
     return render_template('post.html', title=post.title,
                            post=post)
 
@@ -217,9 +243,10 @@ def create_post():
 
     db_sess = db_session.create_session()
     categories = db_sess.query(Category).all()
+    # заполнение комбобокса категориями
+    form.category.choices = [(c.id, c.name) for c in categories]
 
     if form.validate_on_submit():
-
         post = Post()
         post.title = form.title.data
         post.content = form.content.data
@@ -233,7 +260,7 @@ def create_post():
             # если прикреплённый файл является изображением
             if form.icon.data.content_type.startswith('image'):
                 image: Image.Image = Image.open(form.icon.data)
-                image.thumbnail((200, 200))
+                image.thumbnail((350, 350))
                 image = image.convert('RGB')
                 image.save(os.path.join(path, filename))
                 post.icon = filename
@@ -241,13 +268,14 @@ def create_post():
                 return render_template('add_edit_post.html',
                                        title='Добавление поста',
                                        message='Надо прекреплять изображение',
-                                       form=form, categories=categories)
+                                       form=form)
 
-        id_category = request.form['category']
-        category = db_sess.query(Category).get(id_category)
-        post.categories.append(category)
+        categories = db_sess.query(Category).filter(Category.id.in_(form.category.data)).all()
+        post.add_categories(categories)
+
         db_sess.add(post)
         db_sess.commit()
+
         return redirect('/')
 
     return render_template('add_edit_post.html', title='Добавление поста',
@@ -258,12 +286,15 @@ def create_post():
 @login_required
 def edit_post(id):
     form = PostForm()
+
     db_sess = db_session.create_session()
     categories = db_sess.query(Category).all()
+    # заполнение комбобокса категориями
+    form.category.choices = [(c.id, c.name) for c in categories]
 
     if request.method == "GET":
         post = db_sess.query(Post).filter(Post.id == id,
-                                          Post.author_id == current_user.id
+                                          Post.author == current_user
                                           ).first()
         if post:
             form.title.data = post.title
@@ -273,13 +304,18 @@ def edit_post(id):
             abort(404)
     if form.validate_on_submit():
         post = db_sess.query(Post).filter(Post.id == id,
-                                          Post.author_id == current_user.id
+                                          Post.author == current_user
                                           ).first()
         if not post:
             abort(404)
 
         post.title = form.title.data
         post.content = form.content.data
+        categories = db_sess.query(Category).filter(Category.id.in_(form.category.data)).all()
+
+        # Категории меняются если хотя бы одна была выбрана
+        if categories:
+            post.add_categories(categories)
 
         path = 'static/img/thumbnails'
         num_images = len(os.listdir(path)) - 1
@@ -302,7 +338,7 @@ def edit_post(id):
         return redirect('/')
 
     return render_template('add_edit_post.html', title='Редактирование поста',
-                           form=form, categories=categories)
+                           form=form)
 
 
 if __name__ == '__main__':

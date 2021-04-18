@@ -19,8 +19,13 @@ class Post(SqlAlchemyBase, SerializerMixin):
 
     icon = sqlalchemy.Column(sqlalchemy.String, default='default.jpg')
 
-    user = orm.relation('User')
+    author = orm.relation('User')
 
     categories = orm.relation("Category",
                               secondary="association",
                               backref="posts")
+
+    def add_categories(self, categories):
+        for category in self.categories:
+            self.categories.remove(category)
+        self.categories += categories
