@@ -10,8 +10,11 @@
           crossorigin="anonymous">
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
+        <!--<link rel="stylesheet"
+          href="{{ url_for('static', filename='css/show.css') }}">-->
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <title>{{title}}</title>
+
 </head>
 <body>
 <div class="container">
@@ -40,7 +43,7 @@
                    href="/register">Зарегистрироваться</a>
                 {% endif %}
                 <!--Поиск-->
-                <a class="text-muted" href="#">
+                <a class="text-muted" href="/search">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20"
                          height="20" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2"
@@ -65,6 +68,8 @@
         </nav>
     </div>
 </div>
+
+
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>
@@ -72,5 +77,38 @@
 <!--    <p>Подвал(...2021...)</p>-->
 <!--    <a href="#">Back to top</a>-->
 <!--</footer>-->
+<!-- <footer>
+<div>
+   какой-нибудь общий родитель для кнопки и блоков
+  <button class="more">Show 3</button>
+  <hr>
+  <div class="wrapper-boxes">
+    <div class="hidden">A</div><div class="hidden">B</div><div class="hidden">V</div>
+    <div class="hidden">D</div><div class="hidden">E</div><div class="hidden">F</div>
+    <div class="hidden">G</div><div class="hidden">H</div><div class="hidden">I</div>
+    <div class="hidden">J</div><div class="hidden">K</div><div class="hidden">L</div>
+    <div class="hidden">M</div><div class="hidden">N</div><div class="hidden">O</div>
+    <div class="hidden">P</div>
+  </div>
+</div>
+
+</footer>
+   <script>
+      var more = document.querySelectorAll('.more');
+
+for (var i = 0; i < more.length; i++) {
+  more[i].addEventListener('click', function() {
+    var showPerClick = 3;
+
+    var hidden = this.parentNode.querySelectorAll('div.hidden');
+    for (var i = 0; i < showPerClick; i++) {
+      if (!hidden[i]) return this.outerHTML = "";
+
+      hidden[i].classList.add('box');
+      hidden[i].classList.remove('hidden');
+    }
+  });
+}
+    </script>-->
 </body>
 </html>

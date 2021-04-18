@@ -341,6 +341,22 @@ def edit_post(id):
                            form=form)
 
 
+@app.route('/search', methods=['GET', 'POST'])
+def search_user():
+    db_sess = db_session.create_session()
+
+    if request.method == 'GET':
+        line = request.args.get('query', '')
+        users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
+                                           (User.surname.like(f'%{line}%'))).all()
+
+        return render_template('search.html', users=users, title='Поиск: ' + line)
+
+    elif request.method == 'POST':
+        url_arg = request.form.get('for_search')
+        return redirect(url_for('search_user', query=url_arg))
+
+
 if __name__ == '__main__':
     db_session.global_init("db/data.db")
     app.register_blueprint(users_api.blueprint)

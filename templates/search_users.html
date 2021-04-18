@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<form action="" method="post" class="form-inline">
+    <input name="for_search" class="form-control">
+    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Поиск">
+</form>
+    {% if users %}
+<table width="100%" class="table table-bordered">
+
+    <tr class="table-secondary">
+        <td>id</td>
+        <td>Фамилия и имя</td>
+        <td>email</td>
+        <td>Дополнительная информация</td>
+        <td>Количество постов</td>
+    </tr>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.id }}</td>
+        <td><a href="/users/{{ user.id }}">{{ user.surname }} {{ user.name }}</a></td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.about }}</td>
+        <td><a href="/posts/users/{{ user.id }}">Посмотреть его посты</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+    <p class="text-danger text-center">Ничего не найдено!</p>
+{% endif %}
+
+{% endblock %}
