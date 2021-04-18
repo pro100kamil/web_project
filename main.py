@@ -12,7 +12,6 @@ import os
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
@@ -46,7 +45,7 @@ def page_not_available(error):
 @app.route("/index")
 def index():
     db_sess = db_session.create_session()
-    posts = db_sess.query(Post).all()
+    posts = db_sess.query(Post).all()[::-1]
 
     return render_template("index.html", title='Главная', posts=posts)
 
@@ -142,6 +141,49 @@ def about_user():
 
 
 # работа с постами
+@app.route("/posts")
+@login_required
+def posts_current_user():
+    db_sess = db_session.create_session()
+    posts = db_sess.query(Post).filter(Post.author_id == current_user.id)[::-1]
+
+    return render_template("index.html", title='Мои посты', posts=posts)
+
+
+@app.route("/posts/categories/<string:category>")
+def post_by_category(category):
+    db_sess = db_session.create_session()
+    category = db_sess.query(Category).filter(
+        Category.name == category).first()
+    posts = list(filter(lambda el: category in el.categories,
+                        db_sess.query(Post).all()))[::-1]
+    return render_template("index.html", title='Мои посты', posts=posts)
+
+
+@app.route("/posts/users/<int:user_id>")
+def post_by_user_id(user_id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).get(user_id)
+
+    if not user:
+        abort(404)
+    posts = db_sess.query(Post).filter(Post.author_id == user_id)[::-1]
+    return render_template("index.html",
+                           title=f'Посты {user.name} + {user.surname}',
+                           posts=posts)
+
+
+@app.route('/posts/<int:id>', methods=['GET', 'POST'])
+@login_required
+def show_post(id):
+    db_sess = db_session.create_session()
+    post = db_sess.query(Post).filter(Post.id == id).first()
+    if not post:
+        abort(404)
+    return render_template('post.html', title=post.title,
+                           post=post)
+
+
 @app.route('/posts/create', methods=['GET', 'POST'])
 @login_required
 def create_post():
@@ -176,9 +218,10 @@ def create_post():
                                        form=form, categories=categories)
 
         id_category = request.form['category']
-        category = db_sess.query(Category).filter(Category.id == id_category).first()
+        category = db_sess.query(Category).filter(
+            Category.id == id_category).first()
         post.categories.append(category)
-
+        db_sess.add(post)
         db_sess.commit()
         return redirect('/')
 
@@ -200,37 +243,39 @@ def edit_post(id):
         if post:
             form.title.data = post.title
             form.content.data = post.content
+            form.icon.data = post.icon
         else:
             abort(404)
     if form.validate_on_submit():
         post = db_sess.query(Post).filter(Post.id == id,
                                           Post.author_id == current_user.id
                                           ).first()
-        if post:
-            post.title = form.title.data
-            post.content = form.content.data
-
-            path = 'static/img/thumbnails'
-            num_images = len(os.listdir(path)) - 1
-            filename = f'post_{num_images}.jpg'
-
-            if form.icon.data:
-                # если прикреплённый файл является изображением
-                if form.icon.data.content_type.startswith('image'):
-                    image: Image.Image = Image.open(form.icon.data)
-                    image.thumbnail((350, 350))
-                    image = image.convert('RGB')
-                    image.save(os.path.join(path, filename))
-                    post.icon = filename
-                else:
-                    return render_template('add_edit_post.html',
-                                           title='Добавление поста',
-                                           message='Надо прекреплять изображение',
-                                           form=form, categories=categories)
-            db_sess.commit()
-            return redirect('/')
-        else:
+        if not post:
             abort(404)
+
+        post.title = form.title.data
+        post.content = form.content.data
+
+        path = 'static/img/thumbnails'
+        num_images = len(os.listdir(path)) - 1
+        filename = f'post_{num_images}.jpg'
+
+        if form.icon.data:
+            # если прикреплённый файл является изображением
+            if form.icon.data.content_type.startswith('image'):
+                image: Image.Image = Image.open(form.icon.data)
+                image.thumbnail((350, 350))
+                image = image.convert('RGB')
+                image.save(os.path.join(path, filename))
+                post.icon = filename
+            else:
+                return render_template('add_edit_post.html',
+                                       title='Редактирование поста',
+                                       message='Надо прекреплять изображение',
+                                       form=form, categories=categories)
+        db_sess.commit()
+        return redirect('/')
+
     return render_template('add_edit_post.html', title='Редактирование поста',
                            form=form, categories=categories)
 

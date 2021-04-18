@@ -8,4 +8,4 @@ class PostForm(FlaskForm):
     title = StringField('Заголовок', validators=[DataRequired()])
     content = TextAreaField("Содержание")
     icon = FileField('Выберите обложку публикациии')
-    submit = SubmitField('Опубликовать / редактировать')
+    submit = SubmitField('Submit')

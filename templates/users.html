@@ -7,7 +7,7 @@
         <td>Фамилия и имя</td>
         <td>email</td>
         <td>Дополнительная информация</td>
-        <td>Количество подписчиков</td>
+        <td>Количество постов</td>
     </tr>
     {% for user in users %}
     <tr>
@@ -15,7 +15,7 @@
         <td>{{ user.surname }} {{ user.name }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.about }}</td>
-        <td>0</td>
+        <td><a href="/posts/users/{{ user.id }}">Посмотреть его посты</a></td>
     </tr>
     {% endfor %}
 </table>

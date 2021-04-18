@@ -6,6 +6,10 @@ nav {
     background-color: #FFDEAD;
 }
 
+h2 {
+    text-indent: 15px;
+}
+
 td {
     /*Многострочный текст внутри ячейки таблицы*/
     white-space:pre;
@@ -16,6 +20,6 @@ td {
 }
 
 img.card_img {
-text-align: center;
-margin-bottom: 30px;
+    text-align: center;
+    margin-bottom: 30px;
 }
