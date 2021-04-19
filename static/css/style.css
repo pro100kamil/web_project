@@ -15,6 +15,10 @@ td {
     white-space:pre;
 }
 
+pre {
+    white-space: pre-wrap;
+}
+
 .text-danger, .text-success {
     font-size: 25px;
 }

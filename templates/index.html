@@ -13,12 +13,11 @@
                      src="{{ url_for('static', filename='img/thumbnails/') + post.icon
                         }}"
                      alt="Картинка поста!">
+                {% for category in post.categories %}
                 <a href="/posts/categories/{{post.categories[0].name}}">
-                    <strong class="d-inline-block mb-2 text-primary">{{
-                    post.categories[0].name
-                    | capitalize
-                    }}</strong>
+                    <strong class="d-inline-block mb-2 text-primary">{{ category.name | capitalize }}</strong>
                 </a>
+                {% endfor %}
                 <a href="/posts/{{ post.id }}">
                     <h3 class="mb-0">
                         {{ post.title }}
