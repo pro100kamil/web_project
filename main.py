@@ -2,6 +2,8 @@ from flask import Flask, render_template, redirect, abort, request, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
 
+from data import youtube
+
 from data import db_session, users_api
 from data.users import User
 from data.posts import Post
@@ -340,8 +342,15 @@ def edit_post(id):
                            form=form)
 
 
+@app.route('/video/<video_id>')
+def get_video(video_id):
+    video_data = youtube.get_by_id(video_id)
+
+    return render_template('video.html', video=video_data)
+
+
 @app.route('/search', methods=['GET', 'POST'])
-def search_user():
+def search():
     db_sess = db_session.create_session()
 
     if request.method == 'GET':
@@ -353,15 +362,22 @@ def search_user():
                                                (User.surname.like(f'%{line}%'))).all()
             return render_template('search_users.html', users=users,
                                    title='Поиск пользователя: ' + line)
+
         elif kind == 'posts':
             posts = db_sess.query(Post).filter(Post.title.like(f'%{line}%')).all()
             return render_template('search_posts.html', posts=posts,
                                    title='Поиск поста: ' + line)
 
+        elif kind == 'videos':
+            latest_videos = youtube.get_latest(query=line)
+            print(latest_videos)
+            return render_template('search_videos.html', videos=latest_videos,
+                                   title='Поиск видео: ' + line)
+
     elif request.method == 'POST':
         url_arg = request.form.get('for_search')
         kind = request.form.get('kind')
-        return redirect(url_for('search_user', query=url_arg, kind=kind))
+        return redirect(url_for('search', query=url_arg, kind=kind))
 
 
 if __name__ == '__main__':
