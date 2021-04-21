@@ -356,6 +356,7 @@ def search():
     if request.method == 'GET':
         line = request.args.get('query', '')
         kind = request.args.get('kind', 'users')
+        page = int(request.args.get('page', 1))
 
         if kind == 'users':
             users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
@@ -369,10 +370,12 @@ def search():
                                    title='Поиск поста: ' + line)
 
         elif kind == 'videos':
-            latest_videos = youtube.get_latest(query=line)
-            print(latest_videos)
+            latest_videos = youtube.get_latest(query=line, page=page)
+            prev_url = url_for('search', query=line, kind=kind, page=max(page - 1, 1))
+            next_url = url_for('search', query=line, kind=kind, page=page + 1)
             return render_template('search_videos.html', videos=latest_videos,
-                                   title='Поиск видео: ' + line)
+                                   title='Поиск видео: ' + line,
+                                   prev_url=prev_url, next_url=next_url)
 
     elif request.method == 'POST':
         url_arg = request.form.get('for_search')
