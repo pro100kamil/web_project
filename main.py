@@ -385,30 +385,39 @@ def search():
         line = request.args.get('query', '')
         kind = request.args.get('kind', 'users')
         page = int(request.args.get('page', 1))
+        max_results, num_of_btns = 10, 5
+        range_of_pages = range(page - page % num_of_btns + 1,
+                               page + num_of_btns - page % num_of_btns + 1)
+        prev_url = url_for('search', query=line, kind=kind, page=max(page - 1, 1))
+        next_url = url_for('search', query=line, kind=kind, page=page + 1)
 
         if kind == 'users':
             users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
                                                (User.surname.like(
                                                    f'%{line}%'))).all()
+            users = users[(page - 1) * max_results + 1:page * max_results + 1]
             return render_template('search_users.html', users=users,
                                    title='Поиск пользователя: ' + line,
-                                   last_query=line)
+                                   last_query=line, kind=kind, prev_url=prev_url,
+                                   next_url=next_url, pages=range_of_pages, page=page)
 
         elif kind == 'posts':
             posts = db_sess.query(Post).filter(
                 Post.title.like(f'%{line}%')).all()
+            posts = posts[(page - 1) * max_results + 1:page * max_results + 1]
             return render_template('search_posts.html', posts=posts,
                                    title='Поиск поста: ' + line,
-                                   last_query=line)
+                                   last_query=line, kind=kind,
+                                   pages=range_of_pages, next_url=next_url,
+                                   prev_url=prev_url, page=page)
 
         elif kind == 'videos':
             latest_videos = youtube.get_latest(query=line, page=page)
-            prev_url = url_for('search', query=line, kind=kind, page=max(page - 1, 1))
-            next_url = url_for('search', query=line, kind=kind, page=page + 1)
             return render_template('search_videos.html', videos=latest_videos,
                                    title='Поиск видео: ' + line,
-                                   prev_url=prev_url, next_url=next_url,
-                                   last_query=line)
+                                   kind=kind, last_query=line,
+                                   pages=range_of_pages, prev_url=prev_url,
+                                   next_url=next_url, page=page)
 
     elif request.method == 'POST':
         url_arg = request.form.get('for_search')

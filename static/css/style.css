@@ -66,3 +66,6 @@ img.card_img {
  .video_show {
   text-align: center;
   }
+
+  .active-page-item {
+  border: 4px double black;}
