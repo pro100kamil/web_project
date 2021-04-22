@@ -2,61 +2,62 @@
 
 {% block content %}
 
-<form action="" method="post" class="form-inline">
-    <input name="for_search" class="form-control">
+<form action="" method="post" class="form-inline pb-2">
+    <input name="for_search" class="form-control m-2" value="{{ last_query }}">
 
-    <select name="kind" class="form-select" autofocus>
+    <select name="kind" class="form-select m-2" autofocus>
         <option value="users">Пользователи</option>
-        <option value="posts">Посты</option>
+        <option value="posts" selected>Посты</option>
         <option value="videos">Видео</option>
     </select>
 
-    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Поиск">
+    <input class="btn btn-primary m-2" id="submit" name="submit" type="submit"
+           value="Поиск">
 </form>
 
 {% if posts %}
-    {% for i in range(0, posts | length, 2) %}
-    <div class="row mb-2">
-        {% for post in posts[i:i + 2] %}
-        <div class="col-md-6">
-            <div class="card flex-md-row mb-4 box-shadow h-md-250">
-                <div class="card-body d-flex flex-column align-items-start">
+{% for i in range(0, posts | length, 2) %}
+<div class="row mb-2">
+    {% for post in posts[i:i + 2] %}
+    <div class="col-md-6">
+        <div class="card flex-md-row mb-4 box-shadow h-md-250">
+            <div class="card-body d-flex flex-column align-items-start">
 
-                    <img class="card_img"
-                         src="{{ url_for('static', filename='img/thumbnails/') + post.icon
+                <img class="card_img"
+                     src="{{ url_for('static', filename='img/thumbnails/') + post.icon
                             }}"
-                         alt="Картинка поста!">
-                    <a href="/posts/categories/{{post.categories[0].name}}">
-                        <strong class="d-inline-block mb-2 text-primary">{{
+                     alt="Картинка поста!">
+                <a href="/posts/categories/{{post.categories[0].name}}">
+                    <strong class="d-inline-block mb-2 text-primary">{{
                         post.categories[0].name
                         | capitalize
                         }}</strong>
-                    </a>
-                    <a href="/posts/{{ post.id }}">
-                        <h3 class="mb-0">
-                            {{ post.title }}
-                        </h3>
-                    </a>
-                    <div class="mb-1 text-muted">{{ post.created_date.strftime('%e
-                        %b') }}
-                    </div>
-                    <p class="card-text mb-auto">{{ post.content[:30] }}...</p>
-                    <a href="/posts/{{ post.id }}">Continue reading</a>
-                    {% if current_user.is_authenticated and post.author_id ==
-                    current_user.id %}
-                    <a href="/posts/edit/{{ post.id }}" class="btn btn-warning">Редактировать
-                        новость</a>
-                    {% endif %}
+                </a>
+                <a href="/posts/{{ post.id }}">
+                    <h3 class="mb-0">
+                        {{ post.title }}
+                    </h3>
+                </a>
+                <div class="mb-1 text-muted">{{ post.created_date.strftime('%e
+                    %b') }}
                 </div>
+                <p class="card-text mb-auto">{{ post.content[:30] }}...</p>
+                <a href="/posts/{{ post.id }}">Continue reading</a>
+                {% if current_user.is_authenticated and post.author_id ==
+                current_user.id %}
+                <a href="/posts/edit/{{ post.id }}" class="btn btn-warning">Редактировать
+                    новость</a>
+                {% endif %}
             </div>
-
         </div>
 
-        {% endfor %}
     </div>
+
     {% endfor %}
+</div>
+{% endfor %}
 {% else %}
-    <p class="text-danger text-center">Ничего не найдено!</p>
+<p class="text-danger text-center">Ничего не найдено!</p>
 {% endif %}
 
 {% endblock %}

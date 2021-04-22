@@ -14,8 +14,10 @@
                         }}"
                      alt="Картинка поста!">
                 {% for category in post.categories %}
-                <a href="/posts/categories/{{post.categories[0].name}}">
-                    <strong class="d-inline-block mb-2 text-primary">{{ category.name | capitalize }}</strong>
+                <a href="/posts/categories/{{ category.name }}">
+                    <strong class="d-inline-block mb-2 text-primary">
+                        {{ category.name | capitalize }}
+                    </strong>
                 </a>
                 {% endfor %}
                 <a href="/posts/{{ post.id }}">

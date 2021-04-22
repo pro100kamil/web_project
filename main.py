@@ -110,7 +110,7 @@ def unsubscribe(id):
     if not user:
         abort(404)
 
-    cur_user.unfollow(user)  # Текущий юзер подписывается на нужного
+    cur_user.unfollow(user)  # Текущий юзер отписывается от нужного
     db_sess.commit()
     return redirect('/users/' + str(id))
 
@@ -391,13 +391,15 @@ def search():
                                                (User.surname.like(
                                                    f'%{line}%'))).all()
             return render_template('search_users.html', users=users,
-                                   title='Поиск пользователя: ' + line)
+                                   title='Поиск пользователя: ' + line,
+                                   last_query=line)
 
         elif kind == 'posts':
             posts = db_sess.query(Post).filter(
                 Post.title.like(f'%{line}%')).all()
             return render_template('search_posts.html', posts=posts,
-                                   title='Поиск поста: ' + line)
+                                   title='Поиск поста: ' + line,
+                                   last_query=line)
 
         elif kind == 'videos':
             latest_videos = youtube.get_latest(query=line, page=page)
@@ -405,7 +407,8 @@ def search():
             next_url = url_for('search', query=line, kind=kind, page=page + 1)
             return render_template('search_videos.html', videos=latest_videos,
                                    title='Поиск видео: ' + line,
-                                   prev_url=prev_url, next_url=next_url)
+                                   prev_url=prev_url, next_url=next_url,
+                                   last_query=line)
 
     elif request.method == 'POST':
         url_arg = request.form.get('for_search')

@@ -1,21 +1,20 @@
 {% extends "base.html" %}
 
-
-
 {% block content %}
 
-<form action="" method="post" class="form-inline">
-    <input name="for_search" class="form-control">
+<form action="" method="post" class="form-inline pb-2">
+    <input name="for_search" class="form-control m-2" value="{{ last_query }}">
 
-    <select name="kind" class="form-select" autofocus>
-        <option value="users">Пользователи</option>
+    <select name="kind" class="form-select m-2" autofocus>
+        <option value="users" selected>Пользователи</option>
         <option value="posts">Посты</option>
         <option value="videos">Видео</option>
     </select>
 
-    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Поиск">
+    <input class="btn btn-primary m-2" id="submit" name="submit" type="submit"
+           value="Поиск">
 </form>
-    {% if users %}
+{% if users %}
 <table width="100%" class="table table-bordered">
 
     <tr class="table-secondary">
@@ -28,7 +27,8 @@
     {% for user in users %}
     <tr>
         <td>{{ user.id }}</td>
-        <td><a href="/users/{{ user.id }}">{{ user.surname }} {{ user.name }}</a></td>
+        <td><a href="/users/{{ user.id }}">{{ user.surname }} {{ user.name
+            }}</a></td>
         <td>{{ user.email }}</td>
         <td>{{ user.about }}</td>
         <td><a href="/posts/users/{{ user.id }}">Посмотреть его посты</a></td>
@@ -36,7 +36,7 @@
     {% endfor %}
 </table>
 {% else %}
-    <p class="text-danger text-center">Ничего не найдено!</p>
+<p class="text-danger text-center">Ничего не найдено!</p>
 {% endif %}
 
 {% endblock %}
