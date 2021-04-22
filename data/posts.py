@@ -4,6 +4,17 @@ from .db_session import SqlAlchemyBase
 import datetime
 from sqlalchemy_serializer import SerializerMixin
 
+likes = sqlalchemy.Table('likes', SqlAlchemyBase.metadata,
+                         sqlalchemy.Column('post_id',
+                                           sqlalchemy.Integer,
+                                           sqlalchemy.ForeignKey(
+                                               'posts.id')),
+                         sqlalchemy.Column('user_id',
+                                           sqlalchemy.Integer,
+                                           sqlalchemy.ForeignKey(
+                                               'users.id'))
+                         )
+
 
 class Post(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'posts'
@@ -24,6 +35,24 @@ class Post(SqlAlchemyBase, SerializerMixin):
     categories = orm.relation("Category",
                               secondary="association",
                               backref="posts")
+
+    likes_ = orm.relation('User', secondary='likes')
+
+    def like(self, user):
+        # user лайкает этот пост
+        if not self.is_like(user):
+            self.likes_.append(user)
+            return self
+
+    def dislike(self, user):
+        # user убирает лайк с этого поста
+        if self.is_like(user):
+            self.likes_.remove(user)
+            return self
+
+    def is_like(self, user):
+        # лайкнул ли user этот пост
+        return user in self.likes_
 
     def add_categories(self, categories):
         for category in self.categories:

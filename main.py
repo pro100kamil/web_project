@@ -234,7 +234,33 @@ def show_post(id):
         abort(404)
 
     return render_template('post.html', title=post.title,
-                           post=post)
+                           post=post, like=post.is_like(current_user))
+
+
+@app.route("/posts/<int:id>/like")
+@login_required
+def like(id):
+    db_sess = db_session.create_session()
+    post = db_sess.query(Post).filter(Post.id == id).first()
+    if not post:
+        abort(404)
+    cur_user = db_sess.query(User).get(current_user.id)  # Текущий пользователь
+    post.like(cur_user)
+    db_sess.commit()
+    return redirect(f'/posts/{id}')
+
+
+@app.route("/posts/<int:id>/dislike")
+@login_required
+def dislike(id):
+    db_sess = db_session.create_session()
+    post = db_sess.query(Post).filter(Post.id == id).first()
+    if not post:
+        abort(404)
+    cur_user = db_sess.query(User).get(current_user.id)  # Текущий пользователь
+    post.dislike(cur_user)
+    db_sess.commit()
+    return redirect(f'/posts/{id}')
 
 
 @app.route('/posts/create', methods=['GET', 'POST'])
@@ -271,7 +297,8 @@ def create_post():
                                        message='Надо прекреплять изображение',
                                        form=form)
 
-        categories = db_sess.query(Category).filter(Category.id.in_(form.category.data)).all()
+        categories = db_sess.query(Category).filter(
+            Category.id.in_(form.category.data)).all()
         post.add_categories(categories)
 
         db_sess.add(post)
@@ -312,7 +339,8 @@ def edit_post(id):
 
         post.title = form.title.data
         post.content = form.content.data
-        categories = db_sess.query(Category).filter(Category.id.in_(form.category.data)).all()
+        categories = db_sess.query(Category).filter(
+            Category.id.in_(form.category.data)).all()
 
         # Категории меняются если хотя бы одна была выбрана
         if categories:
@@ -359,12 +387,14 @@ def search():
 
         if kind == 'users':
             users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
-                                               (User.surname.like(f'%{line}%'))).all()
+                                               (User.surname.like(
+                                                   f'%{line}%'))).all()
             return render_template('search_users.html', users=users,
                                    title='Поиск пользователя: ' + line)
 
         elif kind == 'posts':
-            posts = db_sess.query(Post).filter(Post.title.like(f'%{line}%')).all()
+            posts = db_sess.query(Post).filter(
+                Post.title.like(f'%{line}%')).all()
             return render_template('search_posts.html', posts=posts,
                                    title='Поиск поста: ' + line)
 

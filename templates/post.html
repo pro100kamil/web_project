@@ -3,4 +3,11 @@
 {% block content %}
     <h2>{{ post.title }}</h2>
     <pre>{{ post.content }}</pre>
+    {% if not like %}
+    <a class="btn btn-primary" href="/posts/{{ post.id }}/like">
+       Поставить лайк</a>
+    {% elif not is_cur_user %}
+    <a class="btn btn-danger" href="/posts/{{ post.id }}/dislike">
+        Убрать лайк</a>
+    {% endif %}
 {% endblock %}
