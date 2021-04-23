@@ -370,9 +370,9 @@ def edit_post(id):
                            form=form)
 
 
-@app.route('/video/<video_url>')
-def get_video(video_url):
-    video_data = vk.get_by_id(video_url)
+@app.route('/video/<video_id>')
+def get_video(video_id):
+    video_data = youtube.get_by_id(video_id)
 
     return render_template('video.html', video=video_data)
 
@@ -386,8 +386,8 @@ def search():
         kind = request.args.get('kind', 'users')
         page = int(request.args.get('page', 1))
         max_results, num_of_btns = 10, 5
-        range_of_pages = range(page - page % num_of_btns + 1,
-                               page + num_of_btns - page % num_of_btns + 1)
+        range_of_pages = range(page - (page - 1) % num_of_btns,
+                               page + num_of_btns - (page - 1) % num_of_btns)
         prev_url = url_for('search', query=line, kind=kind, page=max(page - 1, 1))
         next_url = url_for('search', query=line, kind=kind, page=page + 1)
 
@@ -412,7 +412,7 @@ def search():
                                    prev_url=prev_url, page=page)
 
         elif kind == 'videos':
-            latest_videos = vk.get_latest(query=line, page=page)
+            latest_videos = youtube.get_latest(query=line, page=page)
             return render_template('search_videos.html', videos=latest_videos,
                                    title='Поиск видео: ' + line,
                                    kind=kind, last_query=line,

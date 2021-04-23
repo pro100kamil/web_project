@@ -43,7 +43,7 @@
         {% for p in pages %}
         <li class="page-item {% if p == page %} active-page-item {% endif %}"><a class="page-link"
                                  href="{{ url_for('search',
-                                 query=line, kind=kind, page=p) }}">{{ p }}</a></li>
+                                 query=last_query, kind=kind, page=p) }}">{{ p }}</a></li>
         {% endfor %}
         <li class="page-item"><a class="page-link"
                                  href="{{ next_url }}">Next</a></li>
