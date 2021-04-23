@@ -11,12 +11,15 @@ if os.path.exists(path):
     load_dotenv(path)
 
     YT_API_KEY = os.environ.get('YOUTUBE_API_KEY')
-    PAGES_TOKENS = tuple(map(str.strip, open('pages_tokens.txt').readlines()))
+
+    path = os.path.join(os.path.dirname(__file__), '../pages_tokens.txt')
+    PAGES_TOKENS = tuple(map(str.strip, open(path).readlines()))
 
 
 def get_latest(max_results=10, query='', page=1):
     params = {'part': 'snippet', 'q': query, 'key': YT_API_KEY, 'type': 'video',
-              'regionCode': 'ru', 'maxResults': max_results, 'pageToken': PAGES_TOKENS[page - 1]}
+              'regionCode': 'ru', 'maxResults': max_results,
+              'pageToken': PAGES_TOKENS[max_results * (page - 1) + 1]}
 
     # if page > last_page:
     #     for p in range(last_page, page):
@@ -62,7 +65,7 @@ def get_by_id(video_id):
 
     return {}
 
-# print(get_latest(query='плавание', page=))
+# print(get_latest(query='плавание', page=3))
 # print(get_by_id('kcNpBNpvyc4'))
 # for i in a:
 #     print(i)
