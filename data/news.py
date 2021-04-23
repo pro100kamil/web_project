@@ -6,5 +6,5 @@ def get_news():
           'apiKey=5f80be67653d478e82094179730f4798'
     r = requests.get(url)
     news = list(map(lambda el: (el['title'], el['description']),
-                    r.json()['articles']))
+                     r.json()['articles']))
     return news

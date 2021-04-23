@@ -7,12 +7,15 @@ from data import youtube, tg, news
 from data import db_session, users_api
 from data.users import User
 from data.posts import Post
+from data.comments import Comment
 from data.categories import Category
 from PIL import Image
 import os
 
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
+from forms.comment import CommentForm
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -248,16 +251,33 @@ def post_by_user_id(user_id):
                            posts=posts)
 
 
-@app.route('/posts/<int:id>', methods=['GET', 'POST'])
+@app.route('/posts/<int:post_id>', methods=['GET', 'POST'])
 @login_required
-def show_post(id):
+def show_post(post_id):
+    form = CommentForm()
+
     db_sess = db_session.create_session()
-    post = db_sess.query(Post).filter(Post.id == id).first()
+    post = db_sess.query(Post).get(post_id)
+
     if not post:
         abort(404)
 
-    return render_template('post.html', title=post.title,
-                           post=post, like=post.is_like(current_user))
+    if form.validate_on_submit():
+        new_comment = Comment()
+        new_comment.text = form.content.data
+        new_comment.user_id = current_user.id
+        post.comments.append(new_comment)
+        db_sess.commit()
+        return redirect(f'/posts/{post_id}')
+
+    elif request.method == 'GET':
+        # comments = db_sess.query(Comment).filter(Comment.post_id == post_id).all()
+        comments = post.comments
+        # first_comments = filter(lambda x: x['to_id'] is None, [c.user.to_dict() for c in comments])
+
+        return render_template('post.html', title=post.title,
+                           post=post, like=post.is_like(current_user),
+                               form=form, comments=comments)
 
 
 @app.route("/posts/<int:id>/like")
@@ -449,6 +469,20 @@ def search():
         url_arg = request.form.get('for_search')
         kind = request.form.get('kind')
         return redirect(url_for('search', query=url_arg, kind=kind))
+
+
+@app.route('/posts/<post_id>/comment', methods=['GET', 'POST'])
+def write_comment(post_id):
+
+    db_sess = db_session.create_session()
+    post = db_sess.query(Post).get(post_id)
+    comments = post.comments
+
+    first_comments = filter(lambda x: x['to_id'] is None, [c.to_dict() for c in comments])
+
+
+
+
 
 
 if __name__ == '__main__':
