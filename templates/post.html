@@ -10,4 +10,42 @@
     <a class="btn btn-danger" href="/posts/{{ post.id }}/dislike">
         Убрать лайк</a>
     {% endif %}
+
+    <form action="" method="post" class="form-inline pb-2">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.content.label }}<br>
+            {{ form.content(class="form-control") }}
+            {% for error in form.content.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary m-2") }}</p>
+</form>
+
+{% for c in comments %}
+     <div class="media-block">
+        <a class="media-left" href="#"><img class="img-circle img-sm" alt="Профиль пользователя" src=""></a>
+        <div class="media-body">
+            <div class="mar-btm">
+                <a href="#" class="btn-link text-semibold media-heading box-inline">{{ c.user.name
+                    }} {{ c.user.surname }}</a>
+                <p class="text-muted text-sm"><i class="fa fa-mobile fa-lg"></i>{{
+                    c.created_date.strftime('%e %b %Y') }}</p>
+            </div>
+            <p>{{ c.text }}</p>
+            <div class="pad-ver">
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-default btn-hover-success active" href="#"><i class="fa fa-thumbs-up"></i> Нравится</a>
+                    <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
+                </div>
+                <a class="btn btn-sm btn-default btn-hover-primary" href="#">Ответить</a>
+            </div>
+            <hr>
+        </div>
+     </div>
+{% endfor %}
 {% endblock %}
