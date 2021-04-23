@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, abort, request, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
 
-from data import youtube, vk
+from data import youtube, tg, news
 
 from data import db_session, users_api
 from data.users import User
@@ -18,6 +18,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+NEWS = news.get_news()
 
 
 @login_manager.user_loader
@@ -55,6 +56,28 @@ def index():
 @app.route("/about")
 def about():
     return render_template("about.html", title='О сайте')
+
+
+@app.route('/tg')
+def show_tg_news():
+    ch_name = 'tbite'
+    return render_template('tg_posts.html',
+                           title='Новости',
+                           urls=tg.latest_news(ch_name))
+
+
+@app.route('/news')
+def show_news():
+    global NEWS
+    NEWS = news.get_news()  # обновляем новости
+    return render_template("news.html",
+                           title='Главная', posts=NEWS)
+
+
+@app.route("/news/<int:id>")
+def news_by_id(id):
+    cur = NEWS[id]
+    return render_template('one_news.html', title=cur[0], post=cur)
 
 
 @app.route("/users")
@@ -388,7 +411,8 @@ def search():
         max_results, num_of_btns = 10, 5
         range_of_pages = range(page - (page - 1) % num_of_btns,
                                page + num_of_btns - (page - 1) % num_of_btns)
-        prev_url = url_for('search', query=line, kind=kind, page=max(page - 1, 1))
+        prev_url = url_for('search', query=line, kind=kind,
+                           page=max(page - 1, 1))
         next_url = url_for('search', query=line, kind=kind, page=page + 1)
 
         if kind == 'users':
@@ -398,8 +422,10 @@ def search():
             users = users[(page - 1) * max_results + 1:page * max_results + 1]
             return render_template('search_users.html', users=users,
                                    title='Поиск пользователя: ' + line,
-                                   last_query=line, kind=kind, prev_url=prev_url,
-                                   next_url=next_url, pages=range_of_pages, page=page)
+                                   last_query=line, kind=kind,
+                                   prev_url=prev_url,
+                                   next_url=next_url, pages=range_of_pages,
+                                   page=page)
 
         elif kind == 'posts':
             posts = db_sess.query(Post).filter(
