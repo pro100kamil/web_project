@@ -26,6 +26,12 @@ pre {
 img.card_img {
     text-align: center;
     margin-bottom: 30px;
+    display: block;
+    max-width: 400px;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+}
 }
 
 .header-h1 {

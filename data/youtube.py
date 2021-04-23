@@ -59,10 +59,12 @@ def get_by_id(video_id):
 
     if response:
         v = response[0]
+        url_iframe = f"https://www.youtube.com/embed/{v['id']}"
         video = {'id': v['id'], 'title': v['snippet']['title'],
                  'description': v['snippet']['description'],
                  'url_img': v['snippet']['thumbnails']['medium']['url'],
-                 'date': datetime.strptime(v['snippet']['publishedAt'], PATTERN_IN)}
+                 'date': datetime.strptime(v['snippet']['publishedAt'], PATTERN_IN),
+                 'url_iframe': url_iframe}
         return video
 
     return {}

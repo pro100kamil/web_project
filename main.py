@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, abort, request, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
 
-from data import youtube
+from data import youtube, vk
 
 from data import db_session, users_api
 from data.users import User
@@ -370,9 +370,9 @@ def edit_post(id):
                            form=form)
 
 
-@app.route('/video/<video_id>')
-def get_video(video_id):
-    video_data = youtube.get_by_id(video_id)
+@app.route('/video/<video_url>')
+def get_video(video_url):
+    video_data = vk.get_by_id(video_url)
 
     return render_template('video.html', video=video_data)
 
@@ -412,7 +412,7 @@ def search():
                                    prev_url=prev_url, page=page)
 
         elif kind == 'videos':
-            latest_videos = youtube.get_latest(query=line, page=page)
+            latest_videos = vk.get_latest(query=line, page=page)
             return render_template('search_videos.html', videos=latest_videos,
                                    title='Поиск видео: ' + line,
                                    kind=kind, last_query=line,
