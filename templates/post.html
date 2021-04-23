@@ -11,6 +11,7 @@
         Убрать лайк</a>
     {% endif %}
 
+
     <form action="" method="post" class="form-inline pb-2">
         {{ form.hidden_tag() }}
 
@@ -26,7 +27,7 @@
         <p>{{ form.submit(type="submit", class="btn btn-primary m-2") }}</p>
 </form>
 
-{% for c in comments %}
+<!--{% for c in comments %}
      <div class="media-block">
         <a class="media-left" href="#"><img class="img-circle img-sm" alt="Профиль пользователя" src=""></a>
         <div class="media-body">
@@ -42,10 +43,29 @@
                     <a class="btn btn-sm btn-default btn-hover-success active" href="#"><i class="fa fa-thumbs-up"></i> Нравится</a>
                     <a class="btn btn-sm btn-default btn-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
                 </div>
-                <a class="btn btn-sm btn-default btn-hover-primary" href="#">Ответить</a>
+                <a class="btn btn-sm btn-default btn-hover-primary"
+                   href="{{ url_for('show_post', post_id=c.post_id, reply_to=c.id) }}">
+                    Ответить</a>
             </div>
             <hr>
         </div>
      </div>
-{% endfor %}
+{% if reply_id == c.id | string %}
+   <form action="" method="post" class="form-inline pb-2">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.content.label }}<br>
+            {{ form.content(class="form-control") }}
+            {% for error in form.content.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary m-2") }}</p>
+</form>
+{% endif %}
+{% endfor %}-->
+{{ html_code | safe}}
 {% endblock %}

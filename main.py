@@ -15,6 +15,7 @@ import os
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
 from forms.comment import CommentForm
+from data import functions
 
 
 app = Flask(__name__)
@@ -277,18 +278,18 @@ def show_post(post_id):
         new_comment = Comment()
         new_comment.text = form.content.data
         new_comment.user_id = current_user.id
+        new_comment.to_id = request.args.get('reply_to')
         post.comments.append(new_comment)
         db_sess.commit()
         return redirect(f'/posts/{post_id}')
 
     elif request.method == 'GET':
-        # comments = db_sess.query(Comment).filter(Comment.post_id == post_id).all()
         comments = post.comments
-        # first_comments = filter(lambda x: x['to_id'] is None, [c.user.to_dict() for c in comments])
-
+        html_code_comments = functions.reformat_comments(comments)
+        reply_id = request.args.get('reply_to')
         return render_template('post.html', title=post.title,
-                           post=post, like=post.is_like(current_user),
-                               form=form, comments=comments)
+                               post=post, like=post.is_like(current_user), reply_id=reply_id,
+                               form=form, html_code=html_code_comments)
 
 
 @app.route("/posts/<int:id>/like")
@@ -480,20 +481,6 @@ def search():
         url_arg = request.form.get('for_search')
         kind = request.form.get('kind')
         return redirect(url_for('search', query=url_arg, kind=kind))
-
-
-@app.route('/posts/<post_id>/comment', methods=['GET', 'POST'])
-def write_comment(post_id):
-
-    db_sess = db_session.create_session()
-    post = db_sess.query(Post).get(post_id)
-    comments = post.comments
-
-    first_comments = filter(lambda x: x['to_id'] is None, [c.to_dict() for c in comments])
-
-
-
-
 
 
 if __name__ == '__main__':
