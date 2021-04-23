@@ -32,12 +32,12 @@ img.card_img {
     width: auto;
     height: auto;
 }
-}
 
 .header-h1 {
     text-align: center;
     margin-bottom: .5rem;
-  }
+}
+
 .header-h1 h1 {
     display: inline-block;
     position: relative;
@@ -47,8 +47,9 @@ img.card_img {
     padding: .5rem 3rem;
     font-size: 1.5rem;
     text-transform: uppercase;
-  }
- .header-h1 h1::before {
+}
+
+.header-h1 h1::before {
     content: "";
     position: absolute;
     left: 0;
@@ -57,8 +58,9 @@ img.card_img {
     border-left: 1.5rem solid #fff;
     border-top: 3rem solid transparent;
     border-bottom: 3rem solid transparent;
-  }
- .header-h1 h1::after {
+}
+
+.header-h1 h1::after {
     content: "";
     position: absolute;
     right: 0;
@@ -67,11 +69,12 @@ img.card_img {
     border-right: 1.5rem solid #fff;
     border-top: 3rem solid transparent;
     border-bottom: 3rem solid transparent;
-  }
+}
 
- .video_show {
-  text-align: center;
-  }
+.video_show {
+    text-align: center;
+}
 
-  .active-page-item {
-  border: 4px double black;}
+.active-page-item {
+    border: 4px double black;
+}

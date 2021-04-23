@@ -26,6 +26,16 @@ subscribers = sqlalchemy.Table('subscribers', SqlAlchemyBase.metadata,
                                                  sqlalchemy.ForeignKey(
                                                      'users.id'))
                                )
+liked = sqlalchemy.Table('liked', SqlAlchemyBase.metadata,
+                         sqlalchemy.Column('user_id',
+                                           sqlalchemy.Integer,
+                                           sqlalchemy.ForeignKey(
+                                               'users.id')),
+                         sqlalchemy.Column('post_id',
+                                           sqlalchemy.Integer,
+                                           sqlalchemy.ForeignKey(
+                                               'posts.id'))
+                         )
 
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
@@ -59,6 +69,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                                   backref=orm.backref('subscribers',
                                                       lazy='dynamic'),
                                   lazy='dynamic')
+    # понравившиеся посты
+    liked_posts = orm.relation('Post', secondary='liked')
 
     def follow(self, user):
         if user.id != self.id and not self.is_following(user):

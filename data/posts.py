@@ -42,12 +42,14 @@ class Post(SqlAlchemyBase, SerializerMixin):
         # user лайкает этот пост
         if not self.is_like(user):
             self.likes_.append(user)
+            user.liked_posts.append(self)
             return self
 
     def dislike(self, user):
         # user убирает лайк с этого поста
         if self.is_like(user):
             self.likes_.remove(user)
+            user.liked_posts.remove(self)
             return self
 
     def is_like(self, user):

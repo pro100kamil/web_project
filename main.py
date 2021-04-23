@@ -58,6 +58,17 @@ def about():
     return render_template("about.html", title='О сайте')
 
 
+@app.route("/liked")
+@app.route("/liked_posts")
+@login_required
+def liked_posts():
+    db_sess = db_session.create_session()
+    cur_user = db_sess.query(User).get(current_user.id)
+    posts = cur_user.liked_posts
+    return render_template("liked_posts.html",
+                           title='Понравившиеся посты', posts=posts)
+
+
 @app.route('/tg')
 def show_tg_news():
     ch_name = 'tbite'
