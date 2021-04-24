@@ -24,7 +24,7 @@
                 </p>
             {% endfor %}
         </p>
-        <p>{{ form.submit(type="submit", class="btn btn-primary m-2") }}</p>
+        <p>{{ form.submit_main(type="submit", class="btn btn-primary m-2") }}</p>
 </form>
 
 <!--{% for c in comments %}
@@ -67,5 +67,22 @@
 </form>
 {% endif %}
 {% endfor %}-->
-{{ html_code | safe}}
+<section class="container">
+<div class="row">
+
+<div class="col-md-12">
+
+<div class="panel">
+ <div class="panel-body">
+ <!-- Содержание Новостей -->
+ <!--===================================================-->
+ {{ html_code | safe}}
+ <!--===================================================-->
+ <!-- Конец Содержания Новостей -->
+ </div>
+</div>
+</div>
+
+</div><!-- /.row -->
+</section><!-- /.container -->
 {% endblock %}

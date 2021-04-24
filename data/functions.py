@@ -28,7 +28,7 @@ HTML_FORM = '''   <form action="" method="post" class="form-inline pb-2">
                 </p>
             {% endfor %}
         </p>
-        <p>{{ form.submit(type="submit", class="btn btn-primary m-2") }}</p>
+        <p>{{ form.submit_second(type="submit", class="btn btn-primary m-2") }}</p>
 </form>'''
 
 
@@ -50,11 +50,11 @@ def reformat_comments(comments: List[Comment], to_id=None, reply_id=None):
                             <img class="img-circle img-sm" alt="Профиль пользователя" src="">
                         </a>
                     <div class="media-body">'''
-        html_code += text_2 + text_1 + reformat_comments(comments, comment.id) + '''</div></div>'''
+        html_code += text_2 + text_1 + reformat_comments(comments, comment.id, reply_id)
 
-        if reply_id == comment.id:
+        if reply_id == str(comment.id):
             html_code += HTML_FORM
 
+        html_code += '''</div></div>'''
+
     return html_code
-
-
