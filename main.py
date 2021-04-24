@@ -4,10 +4,10 @@ import uuid
 from flask import Flask, render_template, redirect, abort, request, url_for, render_template_string
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
-from werkzeug.utils import secure_filename
+
 from data import youtube, tg, news
 
-from data import db_session, users_api
+from data import db_session, users_api, posts_api
 from data.users import User
 from data.posts import Post, AnonimPost
 from data.comments import Comment
@@ -137,11 +137,6 @@ def subscribe(id):
 
     if not user:
         abort(404)
-
-    # Не работает по неизвестной причине. Как и с постами current_user.posts.append(...)
-    # current_user.follow(user)
-    # db_sess.merge(current_user)
-    # db_sess.commit()
 
     cur_user.follow(user)  # Текущий юзер подписывается на нужного
     db_sess.commit()
@@ -578,4 +573,5 @@ def search():
 if __name__ == '__main__':
     db_session.global_init("db/data.db")
     app.register_blueprint(users_api.blueprint)
+    app.register_blueprint(posts_api.blueprint)
     app.run()
