@@ -1,23 +1,18 @@
 from requests import get
 import os
-from dotenv import load_dotenv
+from .config import YOUTUBE_API_KEY as YT_API_KEY
 from datetime import datetime
 
 PATTERN_IN = "%Y-%m-%dT%H:%M:%SZ"
 API_YOUTUBE_SERVER = 'https://www.googleapis.com/youtube/v3/search'
 
-path = os.path.join(os.path.dirname(__file__), '../.env')
-if os.path.exists(path):
-    load_dotenv(path)
-
-    YT_API_KEY = os.environ.get('YOUTUBE_API_KEY')
-
-    path = os.path.join(os.path.dirname(__file__), '../pages_tokens.txt')
-    PAGES_TOKENS = tuple(map(str.strip, open(path).readlines()))
+path = os.path.join(os.path.dirname(__file__), '../pages_tokens.txt')
+PAGES_TOKENS = tuple(map(str.strip, open(path).readlines()))
 
 
 def get_latest(max_results=10, query='', page=1):
-    params = {'part': 'snippet', 'q': query, 'key': YT_API_KEY, 'type': 'video',
+    params = {'part': 'snippet', 'q': query, 'key': YT_API_KEY,
+              'type': 'video',
               'regionCode': 'ru', 'maxResults': max_results,
               'pageToken': PAGES_TOKENS[max_results * (page - 1) + 1]}
 
@@ -43,7 +38,8 @@ def get_latest(max_results=10, query='', page=1):
         _dict = {'id': v['id']['videoId'], 'title': v['snippet']['title'],
                  'description': v['snippet']['description'],
                  'url_img': v['snippet']['thumbnails']['medium']['url'],
-                 'date': datetime.strptime(v['snippet']['publishedAt'], PATTERN_IN)}
+                 'date': datetime.strptime(v['snippet']['publishedAt'],
+                                           PATTERN_IN)}
         videos += [_dict]
 
     return videos
@@ -51,7 +47,8 @@ def get_latest(max_results=10, query='', page=1):
 
 def get_by_id(video_id):
     params = {'part': 'snippet', 'key': YT_API_KEY, 'id': video_id}
-    response = get('https://www.googleapis.com/youtube/v3/videos', params=params).json()['items']
+    response = get('https://www.googleapis.com/youtube/v3/videos',
+                   params=params).json()['items']
 
     if response:
         v = response[0]
@@ -59,7 +56,8 @@ def get_by_id(video_id):
         video = {'id': v['id'], 'title': v['snippet']['title'],
                  'description': v['snippet']['description'],
                  'url_img': v['snippet']['thumbnails']['medium']['url'],
-                 'date': datetime.strptime(v['snippet']['publishedAt'], PATTERN_IN),
+                 'date': datetime.strptime(v['snippet']['publishedAt'],
+                                           PATTERN_IN),
                  'url_iframe': url_iframe}
         return video
 

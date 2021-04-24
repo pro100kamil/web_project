@@ -1,28 +1,18 @@
-from requests import get
-import os
-from dotenv import load_dotenv
 from datetime import datetime
 import vk_api
 
+from .config import VK_LOGIN, VK_PASSWORD
 
 PATTERN_IN = "%Y-%m-%dT%H:%M:%SZ"
 
-path = os.path.join(os.path.dirname(__file__), '../.env')
-if os.path.exists(path):
-    load_dotenv(path)
+VK_SESSION = vk_api.VkApi(login=VK_LOGIN, password=VK_PASSWORD)
+try:
+    VK_SESSION.auth(token_only=True)
+except vk_api.AuthError as error:
+    print(error)
+    exit(0)
 
-    VK_LOGIN = os.environ.get('VK_LOGIN')
-    VK_PASSWORD = os.environ.get('VK_PASSWORD')
-
-    VK_SESSION = vk_api.VkApi(login=VK_LOGIN, password=VK_PASSWORD)
-    try:
-        VK_SESSION.auth(token_only=True)
-    except vk_api.AuthError as error:
-        print(error)
-        exit(0)
-
-    VK = VK_SESSION.get_api()
-
+VK = VK_SESSION.get_api()
 
 cur_page, last_page = None, 1
 
@@ -43,7 +33,8 @@ def get_latest(max_results=10, query='', page=1):
                 url_img = video.get(res)
                 break
 
-        data = {'id': video['id'], 'oid': video['owner_id'], 'title': video['title'],
+        data = {'id': video['id'], 'oid': video['owner_id'],
+                'title': video['title'],
                 'description': video['description'], 'url_img': url_img,
                 'date': datetime.utcfromtimestamp(video['date'])}
 
@@ -55,7 +46,8 @@ def get_latest(max_results=10, query='', page=1):
 def get_by_id(video_url: str):
     _, owner_id = video_url.split('_')
 
-    params = {'owner_id': owner_id, 'videos': video_url, 'count': 1, 'fields': 'image'}
+    params = {'owner_id': owner_id, 'videos': video_url, 'count': 1,
+              'fields': 'image'}
 
     response = VK.video.get(**params)
 

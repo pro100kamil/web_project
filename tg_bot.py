@@ -1,12 +1,12 @@
-import hashlib
 import uuid
+import hashlib
 
 from requests import post
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler, ConversationHandler
 
-TOKEN = '1773431202:AAEQ-JoWlUCJ1OjR8kFBWd44PJWUSdYQ_Fk'
+from data.config import TG_TOKEN as TOKEN
 
 
 def start(update, context):
@@ -38,14 +38,18 @@ def add_post(update, context):
     context.user_data['content'] = update.message.text
     link = hashlib.sha512(f"{context.user_data['title']}"
                           f"{uuid.uuid4().hex}".encode()).hexdigest()[:12]
-    response = post(f'http://localhost:5000/api/anonim_posts', json={
-        'title': context.user_data['title'],
-        'content': context.user_data['content'],
-        'link': link
-    }).json()
-    if 'success' in response:
-        update.message.reply_text("Анонимный пост успешно создан")
-        update.message.reply_text('https://...' + link)
+    try:
+        response = post(f'http://localhost:5000/api/anonim_posts', json={
+            'title': context.user_data['title'],
+            'content': context.user_data['content'],
+            'link': link
+        }).json()
+        if 'success' in response:
+            update.message.reply_text("Анонимный пост успешно создан")
+            update.message.reply_text('https://...' + link)
+    except Exception as e:
+        update.message.reply_text('Произошла ошибка')
+        print(e)
     return ConversationHandler.END
 
 
