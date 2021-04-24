@@ -1,3 +1,6 @@
+import hashlib
+import uuid
+
 from flask import Flask, render_template, redirect, abort, request, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
@@ -6,7 +9,7 @@ from data import youtube, tg, news
 
 from data import db_session, users_api
 from data.users import User
-from data.posts import Post
+from data.posts import Post, AnonimPost
 from data.comments import Comment
 from data.categories import Category
 from PIL import Image
@@ -14,9 +17,9 @@ import os
 
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
+from forms.anonim_post import AnonimPostForm
 from forms.comment import CommentForm
 from data import functions
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -68,7 +71,7 @@ def about():
 def liked_posts():
     db_sess = db_session.create_session()
     cur_user = db_sess.query(User).get(current_user.id)
-    posts = cur_user.liked_posts
+    posts = cur_user.liked_posts[::-1]
     return render_template("liked_posts.html",
                            title='Понравившиеся посты', posts=posts)
 
@@ -288,7 +291,8 @@ def show_post(post_id):
         html_code_comments = functions.reformat_comments(comments)
         reply_id = request.args.get('reply_to')
         return render_template('post.html', title=post.title,
-                               post=post, like=post.is_like(current_user), reply_id=reply_id,
+                               post=post, like=post.is_like(current_user),
+                               reply_id=reply_id,
                                form=form, html_code=html_code_comments)
 
 
@@ -425,11 +429,66 @@ def edit_post(id):
                            form=form)
 
 
+@app.route('/anonim_posts/create', methods=['GET', 'POST'])
+@login_required
+def create_anonim_post():
+    form = AnonimPostForm()
+
+    db_sess = db_session.create_session()
+
+    if form.validate_on_submit():
+        post = AnonimPost()
+        post.title = form.title.data
+        post.content = form.content.data
+
+        post.link = hashlib.sha512(f'{post.title}{uuid.uuid4().hex}'.encode()
+                                   ).hexdigest()[:12]
+
+        print('/anonim_posts/' + post.link)
+        db_sess.add(post)
+        db_sess.commit()
+
+        return redirect('/')
+
+    return render_template('add_anonim_post.html', title='Добавление поста',
+                           form=form)
+
+
+@app.route('/anonim_posts/<string:post_link>', methods=['GET', 'POST'])
+@login_required
+def show_anonim_post(post_link):
+    db_sess = db_session.create_session()
+    post = db_sess.query(AnonimPost).filter(
+        AnonimPost.link == post_link).first()
+
+    if not post:
+        abort(404)
+
+    return render_template('anonim_post.html', title=post.title,
+                           post=post)
+
+
+@app.route('/posts/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def post_delete(id):
+    db_sess = db_session.create_session()
+    post = db_sess.query(Post).filter(Post.id == id,
+                                      Post.author == current_user
+                                      ).first()
+    if post:
+        db_sess.delete(post)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
+
+
 @app.route('/video/<video_id>')
 def get_video(video_id):
     video_data = youtube.get_by_id(video_id)
 
-    return render_template('video.html', video=video_data)
+    return render_template('video.html',
+                           title='Видео', video=video_data)
 
 
 @app.route('/search', methods=['GET', 'POST'])

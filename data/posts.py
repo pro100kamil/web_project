@@ -60,3 +60,13 @@ class Post(SqlAlchemyBase, SerializerMixin):
         for category in self.categories:
             self.categories.remove(category)
         self.categories += categories
+
+
+class AnonimPost(SqlAlchemyBase, SerializerMixin):
+    __tablename__ = 'anonim_posts'
+
+    id = sqlalchemy.Column(sqlalchemy.Integer,
+                           primary_key=True, autoincrement=True)
+    title = sqlalchemy.Column(sqlalchemy.String)
+    link = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
