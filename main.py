@@ -1,7 +1,7 @@
 import hashlib
 import uuid
 
-from flask import Flask, render_template, redirect, abort, request, url_for
+from flask import Flask, render_template, redirect, abort, request, url_for, render_template_string
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
 from werkzeug.utils import secure_filename
@@ -18,7 +18,7 @@ import os
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
 from forms.anonim_post import AnonimPostForm
-from forms.comment import CommentForm
+from forms.comment import CommentMainForm, CommentSecondForm
 from data import functions
 
 app = Flask(__name__)
@@ -295,7 +295,8 @@ def post_by_user_id(user_id):
 @app.route('/posts/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def show_post(post_id):
-    form = CommentForm()
+    form = CommentMainForm()
+    second_form = CommentSecondForm()
 
     db_sess = db_session.create_session()
     post = db_sess.query(Post).get(post_id)
@@ -303,9 +304,18 @@ def show_post(post_id):
     if not post:
         abort(404)
 
-    if form.validate_on_submit():
+    if form.submit_main.data and form.validate():
         new_comment = Comment()
         new_comment.text = form.content.data
+        new_comment.user_id = current_user.id
+        new_comment.to_id = None
+        post.comments.append(new_comment)
+        db_sess.commit()
+        return redirect(f'/posts/{post_id}')
+
+    elif second_form.submit_second.data and second_form.validate():
+        new_comment = Comment()
+        new_comment.text = second_form.content.data
         new_comment.user_id = current_user.id
         new_comment.to_id = request.args.get('reply_to')
         post.comments.append(new_comment)
@@ -314,12 +324,13 @@ def show_post(post_id):
 
     elif request.method == 'GET':
         comments = post.comments
-        html_code_comments = functions.reformat_comments(comments)
         reply_id = request.args.get('reply_to')
+        html_code = functions.reformat_comments(comments, reply_id=reply_id)
+        rendered_html_code = render_template_string(html_code, form=second_form)
+
         return render_template('post.html', title=post.title,
                                post=post, like=post.is_like(current_user),
-                               reply_id=reply_id,
-                               form=form, html_code=html_code_comments)
+                               form=form, html_code=rendered_html_code)
 
 
 @app.route("/posts/<int:id>/like")
@@ -533,7 +544,7 @@ def search():
             users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
                                                (User.surname.like(
                                                    f'%{line}%'))).all()
-            users = users[(page - 1) * max_results + 1:page * max_results + 1]
+            users = users[(page - 1) * max_results:page * max_results + 1]
             return render_template('search_users.html', users=users,
                                    title='Поиск пользователя: ' + line,
                                    last_query=line, kind=kind,
@@ -544,7 +555,7 @@ def search():
         elif kind == 'posts':
             posts = db_sess.query(Post).filter(
                 Post.title.like(f'%{line}%')).all()
-            posts = posts[(page - 1) * max_results + 1:page * max_results + 1]
+            posts = posts[(page - 1) * max_results:page * max_results + 1]
             return render_template('search_posts.html', posts=posts,
                                    title='Поиск поста: ' + line,
                                    last_query=line, kind=kind,
