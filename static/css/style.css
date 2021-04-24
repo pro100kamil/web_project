@@ -12,7 +12,7 @@ h2 {
 
 td {
     /*Многострочный текст внутри ячейки таблицы*/
-    white-space:pre;
+    white-space: pre-wrap;
 }
 
 pre, p {

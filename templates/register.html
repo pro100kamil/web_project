@@ -3,47 +3,56 @@
 {% block content %}
 <h2>{{ title }}</h2>
 
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
-        {% for field in [form.name, form.surname, form.about] %}
-        <p>
-            {{ field.label }}<br>
-            {{ field(class="form-control") }}
-            {% for error in field.errors %}
-                <p class="alert alert-danger" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
+    {% for field in [form.name, form.surname, form.about] %}
+    <p>
+        {{ field.label }}<br>
+        {{ field(class="form-control") }}
+        {% for error in field.errors %}
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+    </p>
     {% endfor %}
     <p>
         {{ form.email.label }}<br>
         {{ form.email(class="form-control", type="email") }}<br>
         {% for error in form.email.errors %}
-            <p class="alert alert-danger" role="alert">
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+    </p>
+    <p>
+        {{ form.icon.label }}<br>
+        {{ form.icon(class="form-control-file") }}<br>
+        {% for error in form.icon.errors %}
+            <p content="alert alert-danger" role="alert">
                 {{ error }}
             </p>
         {% endfor %}
     </p>
     {% if reg %}
-        {% for field in [form.password, form.password_again] %}
-            <p>
-                {{ field.label }}<br>
-                {{ field(class="form-control", type="password") }}<br>
-                {% for error in field.errors %}
-                    <p class="alert alert-danger" role="alert">
-                        {{ error }}
-                    </p>
-                {% endfor %}
-            </p>
-        {% endfor %}
+    {% for field in [form.password, form.password_again] %}
+    <p>
+        {{ field.label }}<br>
+        {{ field(class="form-control", type="password") }}<br>
+        {% for error in field.errors %}
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+    </p>
+    {% endfor %}
     {% endif %}
 
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {% if message == 'Изменения сохранены' %}
-        <p class="text-success">{{ message }}</p>
+    <p class="text-success">{{ message }}</p>
     {% else %}
-        <p class="text-danger">{{ message }}</p>
+    <p class="text-danger">{{ message }}</p>
     {% endif %}
 </form>
 {% endblock %}

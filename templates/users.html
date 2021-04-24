@@ -7,7 +7,8 @@
         <td>Фамилия и имя</td>
         <td>email</td>
         <td>Дополнительная информация</td>
-        <td>Количество постов</td>
+        <td>Посты</td>
+        <td>Суммарное кол-во лайков</td>
     </tr>
     {% for user in users %}
     <tr>
@@ -16,6 +17,7 @@
         <td>{{ user.email }}</td>
         <td>{{ user.about }}</td>
         <td><a href="/posts/users/{{ user.id }}">Посмотреть его посты</a></td>
+        <td>{{ user.kol_likes }}</td>
     </tr>
     {% endfor %}
 </table>

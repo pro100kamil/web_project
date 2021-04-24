@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField, \
-    TextAreaField, BooleanField
+    TextAreaField, BooleanField, FileField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, EqualTo
 
@@ -9,6 +9,7 @@ class RegisterForm(FlaskForm):
     name = StringField('Имя', validators=[DataRequired()])
     surname = StringField('Фамилия', validators=[DataRequired()])
     email = EmailField('Email', validators=[DataRequired()])
+    icon = FileField('Выберите аватарку')
     password = PasswordField(
         'Пароль',
         validators=[DataRequired(),

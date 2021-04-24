@@ -10,7 +10,7 @@
     <a class="btn btn-danger" href="/posts/{{ post.id }}/dislike">
         Убрать лайк</a>
     {% endif %}
-
+    <p>Кол-во лайков: <b>{{ post.likes_ | length }}</b></p>
 
     <form action="" method="post" class="form-inline pb-2">
         {{ form.hidden_tag() }}

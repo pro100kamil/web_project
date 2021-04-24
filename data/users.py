@@ -51,6 +51,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                               index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
+    icon = sqlalchemy.Column(sqlalchemy.String, default='default_user.png')
+
     posts = orm.relation("Post", back_populates='author')
 
     followed = orm.relationship('User',
@@ -71,6 +73,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                                   lazy='dynamic')
     # понравившиеся посты
     liked_posts = orm.relation('Post', secondary='liked')
+    kol_likes = None  # суммарное кол-во лайков за все его посты
+    # используется только при сортировке в топе
 
     def follow(self, user):
         if user.id != self.id and not self.is_following(user):

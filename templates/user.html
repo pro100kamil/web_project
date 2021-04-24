@@ -2,9 +2,14 @@
 
 {% block content %}
 <h3>{{ user.surname }} {{ user.name }}</h3>
+<img height="200px"
+     src="{{ url_for('static', filename='img/users/') + user.icon
+        }}"
+     alt="Аватарка">
 <p>{{ user.id }}</p>
 <p>{{ user.email }}</p>
 <pre>{{ user.about }}</pre>
+
 {% if not is_cur_user and not is_subscribed %}
 <a class="btn btn-primary" href="/users/{{ user.id }}/subscribe">
     Подписаться</a>

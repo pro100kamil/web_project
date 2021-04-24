@@ -4,7 +4,7 @@ import uuid
 from flask import Flask, render_template, redirect, abort, request, url_for
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
-
+from werkzeug.utils import secure_filename
 from data import youtube, tg, news
 
 from data import db_session, users_api
@@ -102,12 +102,19 @@ def news_by_id(id):
 def all_users():
     db_sess = db_session.create_session()
     users = db_sess.query(User).all()
+    for user in users:
+        kol_likes = 0
+        for post in user.posts:
+            kol_likes += len(post.likes_)
+        user.kol_likes = kol_likes
     return render_template("users.html",
                            title='Пользователи',
-                           users=users)
+                           users=sorted(users,
+                                        key=lambda user: -user.kol_likes))
 
 
 @app.route("/users/<int:id>")
+@login_required
 def user_by_id(id):
     db_sess = db_session.create_session()
     user = db_sess.query(User).get(id)
@@ -188,6 +195,16 @@ def register():
         user.name = form.name.data
         user.about = form.about.data
         user.set_password(form.password.data)
+        if form.icon.data:
+            # если прикреплённый файл является изображением
+            if form.icon.data.content_type.startswith('image'):
+                user.icon = f'user{len(db_sess.query(User).all())}.jpg'
+                form.icon.data.save(f'static/img/users/{user.icon}')
+            else:
+                return render_template('register.html', title='Регистрация',
+                                       form=form, reg=True,
+                                       message="Надо прекреплять изображение")
+
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
@@ -224,6 +241,15 @@ def about_user():
         user.surname = form.surname.data
         user.name = form.name.data
         user.about = form.about.data
+        if form.icon.data:
+            # если прикреплённый файл является изображением
+            if form.icon.data.content_type.startswith('image'):
+                user.icon = f'user{user.id}.jpg'
+                form.icon.data.save(f'static/img/users/{user.icon}')
+            else:
+                return render_template('register.html', title='Личный кабинет',
+                                       form=form, reg=False,
+                                       message="Надо прекреплять изображение")
         db_sess.commit()
         return render_template('register.html', title='Личный кабинет',
                                form=form, reg=False,
@@ -430,7 +456,6 @@ def edit_post(id):
 
 
 @app.route('/anonim_posts/create', methods=['GET', 'POST'])
-@login_required
 def create_anonim_post():
     form = AnonimPostForm()
 
@@ -444,18 +469,16 @@ def create_anonim_post():
         post.link = hashlib.sha512(f'{post.title}{uuid.uuid4().hex}'.encode()
                                    ).hexdigest()[:12]
 
-        print('/anonim_posts/' + post.link)
         db_sess.add(post)
         db_sess.commit()
 
-        return redirect('/')
+        return redirect(f'/anonim_posts/{post.link}')
 
     return render_template('add_anonim_post.html', title='Добавление поста',
                            form=form)
 
 
 @app.route('/anonim_posts/<string:post_link>', methods=['GET', 'POST'])
-@login_required
 def show_anonim_post(post_link):
     db_sess = db_session.create_session()
     post = db_sess.query(AnonimPost).filter(
