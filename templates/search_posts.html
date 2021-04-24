@@ -5,7 +5,7 @@
 <form action="" method="post" class="form-inline pb-2">
     <input name="for_search" class="form-control m-2" value="{{ last_query }}">
 
-    <select name="kind" class="form-select m-2" autofocus>
+    <select name="kind" class="form-select" autofocus>
         <option value="users">Пользователи</option>
         <option value="posts" selected>Посты</option>
         <option value="videos">Видео</option>
@@ -56,7 +56,12 @@
     {% endfor %}
 </div>
 {% endfor %}
-<nav aria-label="Page navigation example">
+
+{% else %}
+<p class="text-danger text-center">Ничего не найдено!</p>
+{% endif %}
+
+<nav aria-label="Page navigation example" style="font-size: 25pt;">
     <ul class="pagination">
         <li class="page-item"><a class="page-link"
                                  href="{{ prev_url }}">Previous</a>
@@ -70,8 +75,5 @@
                                  href="{{ next_url }}">Next</a></li>
     </ul>
 </nav>
-{% else %}
-<p class="text-danger text-center">Ничего не найдено!</p>
-{% endif %}
 
 {% endblock %}
