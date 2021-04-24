@@ -8,9 +8,6 @@
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
-         <link rel="stylesheet" href="https://bootstraptema.ru/plugins/2015/bootstrap3/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-          crossorigin="anonymous">
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
     <!--<link rel="stylesheet"
@@ -67,6 +64,7 @@
                href="/posts/users/{{ current_user.id }}">Мои посты</a>
             <a class="p-2 text-muted" href="/liked">Понравившиеся посты</a>
             <a class="p-2 text-muted" href="/users">Топ пользователей</a>
+            <a class="p-2 text-muted" href="{{ url_for('search', kind='video') }}">Написать пост</a>
             <a class="p-2 text-muted" href="/posts/create">Написать пост</a>
         </nav>
         <nav class="nav d-flex justify-content-between">

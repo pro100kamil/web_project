@@ -532,13 +532,22 @@ def search():
     if request.method == 'GET':
         line = request.args.get('query', '')
         kind = request.args.get('kind', 'users')
-        page = int(request.args.get('page', 1))
+        page = request.args.get('page', '1')
         max_results, num_of_btns = 10, 5
+
+        if not page.isdigit() or kind not in ['videos', 'users', 'posts']:
+            abort(404)
+
+        page = int(page)
+
         range_of_pages = range(page - (page - 1) % num_of_btns,
                                page + num_of_btns - (page - 1) % num_of_btns)
         prev_url = url_for('search', query=line, kind=kind,
                            page=max(page - 1, 1))
         next_url = url_for('search', query=line, kind=kind, page=page + 1)
+
+        params = {'last_query': line, 'kind': kind, 'prev_url': prev_url,
+                  'next_url': next_url, 'pages': range_of_pages, 'page': page}
 
         if kind == 'users':
             users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
@@ -546,29 +555,19 @@ def search():
                                                    f'%{line}%'))).all()
             users = users[(page - 1) * max_results:page * max_results + 1]
             return render_template('search_users.html', users=users,
-                                   title='Поиск пользователя: ' + line,
-                                   last_query=line, kind=kind,
-                                   prev_url=prev_url,
-                                   next_url=next_url, pages=range_of_pages,
-                                   page=page)
+                                   title='Поиск пользователя: ' + line, **params)
 
         elif kind == 'posts':
             posts = db_sess.query(Post).filter(
                 Post.title.like(f'%{line}%')).all()
             posts = posts[(page - 1) * max_results:page * max_results + 1]
             return render_template('search_posts.html', posts=posts,
-                                   title='Поиск поста: ' + line,
-                                   last_query=line, kind=kind,
-                                   pages=range_of_pages, next_url=next_url,
-                                   prev_url=prev_url, page=page)
+                                   title='Поиск поста: ' + line, **params)
 
         elif kind == 'videos':
             latest_videos = youtube.get_latest(query=line, page=page)
             return render_template('search_videos.html', videos=latest_videos,
-                                   title='Поиск видео: ' + line,
-                                   kind=kind, last_query=line,
-                                   pages=range_of_pages, prev_url=prev_url,
-                                   next_url=next_url, page=page)
+                                   title='Поиск видео: ' + line, **params)
 
     elif request.method == 'POST':
         url_arg = request.form.get('for_search')
