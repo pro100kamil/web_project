@@ -6,7 +6,7 @@ from telegram import ReplyKeyboardMarkup
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler, ConversationHandler
 
-from data.config import TG_TOKEN as TOKEN
+from data.config import TG_TOKEN as TOKEN, SITE
 
 
 def start(update, context):
@@ -19,8 +19,7 @@ def start(update, context):
 
 
 def show_site(update, context):
-    site = 'https://...'
-    update.message.reply_text(f'Наш сайт: {site}')
+    update.message.reply_text(f'Наш сайт: {SITE}')
 
 
 def input_title(update, context):
@@ -39,14 +38,14 @@ def add_post(update, context):
     link = hashlib.sha512(f"{context.user_data['title']}"
                           f"{uuid.uuid4().hex}".encode()).hexdigest()[:12]
     try:
-        response = post(f'http://localhost:5000/api/anonim_posts', json={
+        response = post(f'{SITE}/api/anonim_posts', json={
             'title': context.user_data['title'],
             'content': context.user_data['content'],
             'link': link
         }).json()
         if 'success' in response:
             update.message.reply_text("Анонимный пост успешно создан")
-            update.message.reply_text('https://...' + link)
+            update.message.reply_text(f'{SITE}/anonim_posts/{link}')
     except Exception as e:
         update.message.reply_text('Произошла ошибка')
         print(e)

@@ -17,14 +17,14 @@
 </div>
 
 {% if not is_cur_user and not is_subscribed %}
-<a class="btn btn-primary" href="/users/{{ user.id }}/subscribe">
+<a class="btn btn-primary p-1" href="/users/{{ user.id }}/subscribe">
     Подписаться</a>
 {% elif not is_cur_user %}
-<a class="btn btn-danger" href="/users/{{ user.id }}/unsubscribe">
+<a class="btn btn-danger p-1" href="/users/{{ user.id }}/unsubscribe">
     Отписаться</a>
 {% endif %}
-<a class="btn btn-primary p-1" style="font-size: 18pt;" href="/posts/users/{{ user.id }}">Посмотреть
-    посты</a>
+<a class="btn btn-primary p-1" href="/posts/users/{{ user.id }}">
+    Посмотреть посты</a>
 
 <h3 style="margin-top: 50px;">Подписки</h3>
 <table width="100%" class="table table-bordered" style="color: white; font-size: 14pt;">
@@ -39,8 +39,7 @@
                 <td><img alt="Профиль пользователя" width="50px" height="50px"
                                  src="{{url_for('static', filename='img/users/') + user1.icon}}"
                                  style="border-radius: 50%;">
-        <a href="/users/{{ user1.id }}"
-        style="color: white;">{{ user1.surname }} {{ user1.name }}</a></td>
+<a href="/users/{{ user1.id }}" style="color: white;">{{ user1.surname }} {{ user1.name }}</a></td>
         <td>{{ user1.email }}</td>
         <td><a href="/posts/users/{{ user1.id }}" style="color: white;">Посмотреть его посты ({{
            user1.posts | length }})</a></td>
@@ -61,8 +60,7 @@
                 <td><img alt="Профиль пользователя" width="50px" height="50px"
                                  src="{{url_for('static', filename='img/users/') + user1.icon}}"
                                  style="border-radius: 50%;">
-        <a href="/users/{{ user1.id }}"
-        style="color: white;">{{ user1.surname }} {{ user1.name }}</a></td>
+<a href="/users/{{ user1.id }}" style="color: white;">{{ user1.surname }} {{ user1.name }}</a></td>
         <td>{{ user1.email }}</td>
         <td><a href="/posts/users/{{ user1.id }}" style="color: white;">Посмотреть его посты ({{
            user1.posts | length }})</a></td>

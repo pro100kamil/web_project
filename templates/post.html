@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h4 style="text-align: center; margin-bottom: 10px;" class="text-muted">Пост</h4>
-    <h1 style="text-align: center; margin-bottom: 20px">{{ post.title }}</h1>
-    <div style="background-color: white; border-radius: 20px; padding: 10px 10px;">
-    <pre style="font-size: 16pt;">{{ post.content }}</pre></div>
-    <div style="margin: 20px 0px;">
+<h4 style="text-align: center; margin-bottom: 10px;" class="text-muted">
+    Пост</h4>
+<h1 style="text-align: center; margin-bottom: 20px">{{ post.title }}</h1>
+<div style="background-color: white; border-radius: 20px; padding: 10px 10px;">
+    <pre style="font-size: 16pt;">{{ post.content }}</pre>
+</div>
+<div style="margin: 20px 0px;">
     <h4>Автор: {{ post.author.name }} {{ post.author.surname }}</h4>
     <h4>Дата публикации: {{ post.created_date.strftime('%e %b, %Y') }}</h4>
-        </div>
-    <div style="margin: 50px 0px;">
+</div>
+<div style="margin: 50px 0px;">
     {% if not like %}
     <a class="btn btn-primary" href="/posts/{{ post.id }}/like">
-       Поставить лайк</a>
+        Поставить лайк</a>
     {% elif not is_cur_user %}
     <a class="btn btn-danger" href="/posts/{{ post.id }}/dislike">
         Убрать лайк</a>
     {% endif %}
     <p>Кол-во лайков: <b>{{ post.likes_ | length }}</b></p>
-    </div>
-    <h2>Комментарии: {{post.comments | length}}</h2>
-    <form action="" method="post" class="form-inline pb-2">
-        {{ form.hidden_tag() }}
+</div>
+<h2>Комментарии: {{post.comments | length}}</h2>
+<form action="" method="post" class="form-inline pb-2">
+    {{ form.hidden_tag() }}
 
-        <p>
-            {{ form.content(class="form-control", style="width: 400px;") }}
-            {% for error in form.content.errors %}
-                <p class="alert alert-danger" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit_main(type="submit", class="btn btn-primary m-2") }}</p>
+    <p>
+        {{ form.content(class="form-control", style="width: 400px;") }}
+        {% for error in form.content.errors %}
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+    </p>
+    <p>{{ form.submit_main(type="submit", class="btn btn-primary m-2") }}</p>
 </form>
 
 <!--{% for c in comments %}
@@ -75,22 +77,22 @@
 {% endif %}
 {% endfor %}-->
 <section class="container">
-<div class="row">
+    <div class="row">
 
-<div class="col-md-12">
+        <div class="col-md-12">
 
-<div class="panel">
- <div class="panel-body">
- <!-- Содержание Новостей -->
- <!--===================================================-->
- {{ html_code | safe}}
- <!--===================================================-->
- <!-- Конец Содержания Новостей -->
- </div>
-</div>
-</div>
+            <div class="panel">
+                <div class="panel-body">
+                    <!-- Содержание Новостей -->
+                    <!--===================================================-->
+                    {{ html_code | safe}}
+                    <!--===================================================-->
+                    <!-- Конец Содержания Новостей -->
+                </div>
+            </div>
+        </div>
 
-</div><!-- /.row -->
+    </div><!-- /.row -->
 </section><!-- /.container -->
 
 {% endblock %}

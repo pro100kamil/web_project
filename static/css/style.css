@@ -127,7 +127,7 @@ img.card_img {
 
 .thumbnail {
     border-radius: 0;
-    border-color: #e9e9e9
+    border-color: #e9e9e9;
 }
 
 .tag.tag-sm, .btn-group-sm>.tag {
@@ -178,6 +178,6 @@ img.card_img {
 }
 
 .add_edit_form {
-font-size: 16pt;
-font-weight:bold;
+    font-size: 16pt;
+    font-weight:bold;
 }

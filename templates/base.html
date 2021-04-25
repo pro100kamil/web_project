@@ -39,27 +39,33 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav mr-auto col-3">
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Главная <span class="sr-only">(current)</span></a>
                 </li>
             </ul>
             <div class="col-4 text-center">
                 <a class="navbar-brand" href="/">
-                    <img src="/static/img/1.svg" width="30" height="30"
+                    <img src="/static/img/favicon.ico" width="30" height="30"
                          class="d-inline-block align-top" alt="">
-                    Yandex Lyceum
+                    Blog
                 </a>
             </div>
-            <div class="col-4 d-flex justify-content-end align-items-center">
+            <div class="col-5 d-flex justify-content-end align-items-center">
                 {% if current_user.is_authenticated %}
                 <a href="/about_user"
-                   class="btn btn-outline-light my-2 my-sm-0">Личный
-                    кабинет</a>
-                <a href="/logout" class="btn btn-outline-light my-2 my-sm-0">Выйти</a>
+                   class="btn btn-outline-light my-2 my-sm-0 p-1">
+                    Личный кабинет</a>
+                <a href="/logout"
+                   class="btn btn-outline-light my-2 my-sm-0 p-1">
+                    Выйти</a>
                 {% else %}
-                <a href="/login" class="btn btn-outline-light my-2 my-sm-0">Войти</a>
-                <a href="/register" class="btn btn-outline-light my-2 my-sm-0">Зарегистрироваться</a>
+                <a href="/login"
+                   class="btn btn-outline-light my-2 my-sm-0 p-1">
+                    Войти</a>
+                <a href="/register"
+                   class="btn btn-outline-light my-2 my-sm-0 p-1">
+                    Зарегистрироваться</a>
                 {% endif %}
                 <a class="text-muted" href="/search">
                     <img src="/static/img/loop.svg" width="20" height="20"
@@ -115,7 +121,11 @@
                     <a class="nav-link" href="/news">Новости </a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="https://t.me/CreateAnonymNoteBot">
+                    <a class="nav-link" href="/it_news">It-Новости </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link"
+                       href="https://t.me/CreateAnonymNoteBot">
                         Телеграм-бот </a>
                 </li>
                 <li class="nav-item active">
@@ -132,42 +142,6 @@
 <main role="main" class="container" style="margin-top: 50px;">
     {% block content %}{% endblock %}
 </main>
-<!--<footer class="blog-footer">-->
-<!--    <p>Подвал(...2021...)</p>-->
-<!--    <a href="#">Back to top</a>-->
-<!--</footer>-->
-<!-- <footer>
-<div>
-   какой-нибудь общий родитель для кнопки и блоков
-  <button class="more">Show 3</button>
-  <hr>
-  <div class="wrapper-boxes">
-    <div class="hidden">A</div><div class="hidden">B</div><div class="hidden">V</div>
-    <div class="hidden">D</div><div class="hidden">E</div><div class="hidden">F</div>
-    <div class="hidden">G</div><div class="hidden">H</div><div class="hidden">I</div>
-    <div class="hidden">J</div><div class="hidden">K</div><div class="hidden">L</div>
-    <div class="hidden">M</div><div class="hidden">N</div><div class="hidden">O</div>
-    <div class="hidden">P</div>
-  </div>
-</div>
 
-</footer>
-   <script>
-      var more = document.querySelectorAll('.more');
-
-for (var i = 0; i < more.length; i++) {
-  more[i].addEventListener('click', function() {
-    var showPerClick = 3;
-
-    var hidden = this.parentNode.querySelectorAll('div.hidden');
-    for (var i = 0; i < showPerClick; i++) {
-      if (!hidden[i]) return this.outerHTML = "";
-
-      hidden[i].classList.add('box');
-      hidden[i].classList.remove('hidden');
-    }
-  });
-}
-    </script>-->
 </body>
 </html>

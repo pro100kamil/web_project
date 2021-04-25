@@ -79,16 +79,21 @@ def liked_posts():
     db_sess = db_session.create_session()
     cur_user = db_sess.query(User).get(current_user.id)
     posts = cur_user.liked_posts[::-1]
-    return render_template("liked_posts.html",
-                           title='Понравившиеся посты', posts=posts)
+    if posts:
+        return render_template("liked_posts.html",
+                               title='Понравившиеся посты', posts=posts)
+    else:
+        return render_template("message.html",
+                               title='Понравившиеся посты',
+                               message='Понравившихся постов нет')
 
 
-# @app.route('/tg')
-# def show_tg_news():
-#     ch_name = 'tbite'
-#     return render_template('tg_posts.html',
-#                            title='Новости',
-#                            urls=tg.latest_news(ch_name))
+@app.route('/it_news')
+def show_tg_news():
+    ch_name = 'tbite'
+    return render_template('tg_posts.html',
+                           title='It-Новости',
+                           urls=tg.latest_news(ch_name))
 
 
 @app.route('/news')
@@ -280,9 +285,14 @@ def post_by_user_id(user_id):
     if not user:
         abort(404)
     posts = db_sess.query(Post).filter(Post.author_id == user_id)[::-1]
-    return render_template("index.html",
-                           title=f'Посты {user.name} {user.surname}',
-                           posts=posts)
+    if posts:
+        return render_template("index.html",
+                               title=f'Посты {user.name} {user.surname}',
+                               posts=posts)
+    else:
+        return render_template("message.html",
+                               title=f'Посты {user.name} {user.surname}',
+                               message='У этого пользователя нет постов')
 
 
 @app.route('/posts/<int:post_id>', methods=['GET', 'POST'])
@@ -575,8 +585,7 @@ if __name__ == '__main__':
     app.register_blueprint(users_api.blueprint)
     app.register_blueprint(posts_api.blueprint)
 
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    # port = int(os.environ.get("PORT", 5000))
+    # app.run(host='0.0.0.0', port=port)
 
-    # app.run(host='127.0.0.1', port=5000)
-    # app.run(debug=True)
+    app.run(host='127.0.0.1', port=5000)
