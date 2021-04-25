@@ -85,4 +85,9 @@
 
 </div><!-- /.row -->
 </section><!-- /.container -->
+<script>
+    $(function() {
+       $("html, body").animate({ scrollTop: $("#{{ section }}").offset().top }, 500);
+    });
+</script>
 {% endblock %}

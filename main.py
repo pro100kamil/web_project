@@ -53,6 +53,7 @@ def page_not_available(error):
 
 # страницы сайта
 @app.route("/")
+@app.route("/posts")
 @app.route("/index")
 def index():
     db_sess = db_session.create_session()
@@ -259,14 +260,14 @@ def about_user():
                            title='Личный кабинет', reg=False, form=form)
 
 
-# работа с постами
-@app.route("/posts")
-@login_required
-def posts_current_user():
-    db_sess = db_session.create_session()
-    posts = db_sess.query(Post).filter(Post.author == current_user)[::-1]
-
-    return render_template("index.html", title='Мои посты', posts=posts)
+# # работа с постами
+# @app.route("/posts")
+# @login_required
+# def posts_current_user():
+#     db_sess = db_session.create_session()
+#     posts = db_sess.query(Post).filter(Post.author == current_user)[::-1]
+#
+#     return render_template("index.html", title='Мои посты', posts=posts)
 
 
 @app.route("/posts/categories/<string:category>")
@@ -555,7 +556,7 @@ def search():
             users = db_sess.query(User).filter((User.name.like(f'%{line}%')) |
                                                (User.surname.like(
                                                    f'%{line}%'))).all()
-            users = users[(page - 1) * max_results:page * max_results + 1]
+            users = users[(page - 1) * max_results:page * max_results]
             return render_template('search_users.html', users=users,
                                    title='Поиск пользователя: ' + line,
                                    **params)
@@ -563,7 +564,7 @@ def search():
         elif kind == 'posts':
             posts = db_sess.query(Post).filter(
                 Post.title.like(f'%{line}%')).all()
-            posts = posts[(page - 1) * max_results:page * max_results + 1]
+            posts = posts[(page - 1) * max_results:page * max_results]
             return render_template('search_posts.html', posts=posts,
                                    title='Поиск поста: ' + line, **params)
 

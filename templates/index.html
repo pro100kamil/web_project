@@ -2,10 +2,50 @@
 
 {% block content %}
 
+
 {% for i in range(0, posts | length, 2) %}
-<div class="row mb-2">
+<div class="row mb-2" style="margin-top: 30px;">
+    <!--<div class="card-deck" style="margin-top: 20px; margin-bottom: 20px;">-->
     {% for post in posts[i:i + 2] %}
     <div class="col-md-6">
+    <div class="card" style="width: 25rem; background-color: #85c2ff;">
+                {% for category in post.categories %}
+                <a href="/posts/categories/{{ category.name }}">
+                    <strong class="d-inline-block mb-2 text-primary">
+                        {{ category.name | capitalize }}
+                    </strong>
+                </a>
+                {% endfor %}
+  <img class="card-img-top card_img" src="{{ url_for('static', filename='img/thumbnails/') + post.icon
+                        }}" alt="Card image cap">
+  <div class="card-body d-flex flex-column align-items-start" style="vertical-align: bottom;">
+     <div class="mb-4" style="font-size: 14pt; color: white;">{{
+         post.created_date.strftime('%e
+        %b %Y') }}
+    </div>
+    <h5 class="card-title" style="font-size: 16pt;">{{ post.title }}</h5>
+    <p class="card-text">{{ post.content[:30] }}...</p>
+    <a href="/posts/{{ post.id }}" class="btn btn-primary">Читать</a>
+                {% if current_user.is_authenticated and post.author_id ==
+                current_user.id %}
+                <a href="/posts/edit/{{ post.id }}" class="btn btn-warning" style="margin: 10px 0px;">
+                    Редактировать</a>
+                <a href="/posts/delete/{{ post.id }}" class="btn btn-danger">
+                    Удалить
+                </a>
+                {% endif %}
+  </div>
+</div>
+
+</div>
+    {% endfor %}
+</div>
+{% endfor %}
+
+{% endblock %}
+    <!--<div class="col-md-6">
+
+
         <div class="card flex-md-row mb-4 box-shadow h-md-250">
             <div class="card-body d-flex flex-column align-items-start">
 
@@ -41,10 +81,5 @@
             </div>
         </div>
 
-    </div>
+    </div>-->
 
-    {% endfor %}
-</div>
-{% endfor %}
-
-{% endblock %}

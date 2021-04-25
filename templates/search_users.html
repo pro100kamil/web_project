@@ -35,7 +35,11 @@
     </tr>
     {% endfor %}
 </table>
-<nav aria-label="Page navigation example">
+
+{% else %}
+<p class="text-danger text-center">Ничего не найдено!</p>
+{% endif %}
+<nav aria-label="Page navigation example" style="font-size: 25pt;">
     <ul class="pagination">
         <li class="page-item"><a class="page-link"
                                  href="{{ prev_url }}">Previous</a>
@@ -49,8 +53,6 @@
                                  href="{{ next_url }}">Next</a></li>
     </ul>
 </nav>
-{% else %}
-<p class="text-danger text-center">Ничего не найдено!</p>
-{% endif %}
+
 
 {% endblock %}

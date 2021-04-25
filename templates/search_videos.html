@@ -22,24 +22,19 @@
     <div class="col-md-6">
         <div class="card flex-md-row mb-4 box-shadow h-md-250">
             <div class="card-body d-flex flex-column align-items-start">
-
+                <a href="/video/{{video['id']}}">
                 <img class="card_img"
                      src="{{ video['url_img'] }}"
-                     alt="Картинка поста!">
-                <a href="#">
-                    <strong class="d-inline-block mb-2 text-primary">Здесь
-                        должна быть тематика
-                    </strong>
-                </a>
-                <a href="/video/{{video['id']}}">
+                     alt="Картинка видео!">
+
                     <h3 class="mb-0">
                         {{ video['title'] }}
                     </h3>
                 </a>
-                <div class="mb-1 text-muted">{{ video['date'].strftime('%e
+                <div class="mb-1 text-muted" style="font-size: 16pt;">{{ video['date'].strftime('%e
                     %b %Y') }}
                 </div>
-                <p class="card-text mb-auto">{{ video['description'][:30]
+                <p class="card-text mb-auto">{{ video['description'][:60]
                     }}...</p>
             </div>
         </div>
@@ -49,7 +44,12 @@
     {% endfor %}
 </div>
 {% endfor %}
-<nav aria-label="Page navigation example">
+
+{% else %}
+<p class="text-danger text-center">Ничего не найдено!</p>
+{% endif %}
+
+<nav aria-label="Page navigation example" style="font-size: 25pt;">
     <ul class="pagination">
         <li class="page-item"><a class="page-link"
                                  href="{{ prev_url }}">Previous</a>
@@ -64,8 +64,5 @@
     </ul>
 </nav>
 
-{% else %}
-<p class="text-danger text-center">Ничего не найдено!</p>
-{% endif %}
 
 {% endblock %}

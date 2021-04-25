@@ -13,7 +13,7 @@ PAGES_TOKENS = tuple(map(str.strip, open(path).readlines()))
 def get_latest(max_results=10, query='', page=1):
     params = {'part': 'snippet', 'q': query, 'key': YT_API_KEY,
               'type': 'video',
-              'regionCode': 'ru', 'maxResults': max_results,
+              'regionCode': 'RU', 'maxResults': max_results,
               'pageToken': PAGES_TOKENS[max_results * (page - 1) + 1]}
 
     # if page > last_page:
