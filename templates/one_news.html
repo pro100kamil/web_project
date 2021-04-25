@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>{{ post[0] }}</h3>
-<pre>{{ post[1] }}</pre>
-<p><a href="{{ post[2] }}">Читать подробнее</a></p>
-<img src="{{ post[3] }}" width="60%" alt="">
+    <h3 style="text-align: center; margin-bottom: 20px;">{{ post[0] }}</h3>
+    <div style="background-color: white; border-radius: 20px; padding: 10px 10px;">
+    <pre style="font-size: 16pt;">{{ post[1] }}</pre></div>
+<p style="margin-top: 50px;"><a href="{{ post[2] }}" style="font-size: 16pt;"
+                                                 class="btn btn-primary">Читать подробнее</a></p>
+<img src="{{ post[3] }}" style="text-align: center;" width="60%" alt="">
 {% endblock %}
