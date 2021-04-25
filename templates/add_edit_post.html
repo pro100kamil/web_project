@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{ title }}</h2>
+<h2 style="text-align: center;">{{ title }}</h2>
 <form action="" method="post" enctype="multipart/form-data" class="login_form">
     {{ form.hidden_tag() }}
     <p>
-        {{ form.title.label }}<br>
+        <span class="add_edit_form">{{ form.title.label }}</span><br>
         {{ form.title(class="form-control") }}<br>
         {% for error in form.title.errors %}
             <p class="alert alert-danger" role="alert">
@@ -14,7 +14,7 @@
         {% endfor %}
     </p>
     <p>
-        {{ form.content.label }}<br>
+    <span class="add_edit_form">{{ form.content.label }}</span><br>
         {{ form.content(class="form-control") }}<br>
         {% for error in form.content.errors %}
             <p content="alert alert-danger" role="alert">
@@ -23,7 +23,7 @@
         {% endfor %}
     </p>
     <p>
-        {{ form.icon.label }}<br>
+        <span class="add_edit_form">{{ form.icon.label }}</span><br>
         {{ form.icon(class="form-control-file") }}<br>
         {% for error in form.icon.errors %}
             <p content="alert alert-danger" role="alert">
@@ -32,7 +32,7 @@
         {% endfor %}
     </p>
     <p>
-        {{ form.category.label }}<br>
+        <span class="add_edit_form">{{ form.category.label }}</span><br>
         {{ form.category(class="form-control", id="choose_category") }}<br>
         {% for error in form.category.errors %}
             <p content="alert alert-danger" role="alert">

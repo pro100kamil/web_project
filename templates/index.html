@@ -23,7 +23,9 @@
          post.created_date.strftime('%e
         %b %Y') }}
     </div>
-    <h5 class="card-title" style="font-size: 16pt;">{{ post.title }}</h5>
+                        <h3 class="mb-0">
+                        {{ post.title }}
+                    </h3>
     <p class="card-text">{{ post.content[:30] }}...</p>
     <a href="/posts/{{ post.id }}" class="btn btn-primary">Читать</a>
                 {% if current_user.is_authenticated and post.author_id ==

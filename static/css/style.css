@@ -175,3 +175,8 @@ img.card_img {
 .mar-top {
     margin-top: 15px;
 }
+
+.add_edit_form {
+font-size: 16pt;
+font-weight:bold;
+}

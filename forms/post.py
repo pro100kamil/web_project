@@ -10,4 +10,4 @@ class PostForm(FlaskForm):
     icon = FileField('Выберите обложку публикациии')
 
     category = SelectMultipleField('Выберите категории', coerce=int)
-    submit = SubmitField('Submit')
+    submit = SubmitField('Добавить / редактировать')
