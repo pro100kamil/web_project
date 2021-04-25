@@ -1,5 +1,7 @@
 import flask
-from flask import jsonify, request
+from flask import jsonify, request, make_response
+from sqlalchemy.exc import IntegrityError
+
 
 from . import db_session
 from .posts import Post, AnonimPost
@@ -31,7 +33,7 @@ def get_one_post(post_id):
     db_sess = db_session.create_session()
     post = db_sess.query(Post).get(post_id)
     if not post:
-        return jsonify({'error': 'Not found'})
+        return make_response(jsonify({'error': 'Not found'}), 404)
     return jsonify(
         {
             'post': post.to_dict(only=fields)
@@ -42,9 +44,9 @@ def get_one_post(post_id):
 @blueprint.route('/api/posts', methods=['POST'])
 def create_post():
     if not request.json:
-        return jsonify({'error': 'Empty request'})
+        return make_response(jsonify({'error': 'Empty request'}), 400)
     elif not all(key in request.json for key in required_fields):
-        return jsonify({'error': 'Bad request'})
+        return make_response(jsonify({'error': 'Bad request'}), 400)
 
     db_sess = db_session.create_session()
 
@@ -53,18 +55,21 @@ def create_post():
     post.title = request.json.get('title')
     post.content = request.json.get('content')
     post.created_date = request.json.get('created_date')
+    try:
+        db_sess.add(post)
+        db_sess.commit()
+    except IntegrityError:
+        return make_response(jsonify({'error': 'Error from database'}, 500))
 
-    db_sess.add(post)
-    db_sess.commit()
-    return jsonify({'success': 'OK'})
+    return make_response(jsonify({'success': 'OK'}), 200)
 
 
 @blueprint.route('/api/anonim_posts', methods=['POST'])
 def create_anonim_post():
     if not request.json:
-        return jsonify({'error': 'Empty request'})
+        return make_response(jsonify({'error': 'Empty request'}), 400)
     elif 'title' not in request.json and 'link' not in request.json:
-        return jsonify({'error': 'Bad request'})
+        return make_response(jsonify({'error': 'Bad request'}), 400)
 
     db_sess = db_session.create_session()
 
@@ -73,9 +78,13 @@ def create_anonim_post():
     post.content = request.json.get('content')
     post.link = request.json.get('link')
 
-    db_sess.add(post)
-    db_sess.commit()
-    return jsonify({'success': 'OK'})
+    try:
+        db_sess.add(post)
+        db_sess.commit()
+    except IntegrityError:
+        return make_response(jsonify({'error': 'Error from database'}, 500))
+
+    return make_response(jsonify({'success': 'OK'}), 200)
 
 
 @blueprint.route('/api/posts/<int:post_id>', methods=['DELETE'])
@@ -83,23 +92,23 @@ def delete_post(post_id):
     db_sess = db_session.create_session()
     post = db_sess.query(Post).get(post_id)
     if not post:
-        return jsonify({'error': 'Not found'})
+        return make_response(jsonify({'error': 'Not found'}), 404)
     db_sess.delete(post)
     db_sess.commit()
-    return jsonify({'success': 'OK'})
+    return make_response(jsonify({'success': 'OK'}), 200)
 
 
 @blueprint.route('/api/users', methods=['PUT'])
 def edit_post():
     if not request.json:
-        return jsonify({'error': 'Empty request'})
+        return make_response(jsonify({'error': 'Empty request'}), 400)
     elif 'id' not in request.json:
-        return jsonify({'error': 'Bad request'})
+        return make_response(jsonify({'error': 'Bad request'}), 400)
     db_sess = db_session.create_session()
 
     post = db_sess.query(Post).get(request.json["id"])
     if not post:
-        return jsonify({'error': 'Not found'})
+        return make_response(jsonify({'error': 'Not found'}), 404)
 
     post.author_id = request.json.get('author_id')
     post.title = request.json.get('title')
@@ -108,4 +117,4 @@ def edit_post():
 
     db_sess.add(post)
     db_sess.commit()
-    return jsonify({'success': 'OK'})
+    return make_response(jsonify({'success': 'OK'}), 200)
