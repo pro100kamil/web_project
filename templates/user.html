@@ -1,14 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>{{ user.surname }} {{ user.name }}</h3>
-<img height="200px"
+<div style="text-align: center;">
+<img height="200px" width="200px" style="border-radius: 50%;"
      src="{{ url_for('static', filename='img/users/') + user.icon
         }}"
      alt="Аватарка">
-<p>{{ user.id }}</p>
-<p>{{ user.email }}</p>
-<pre>{{ user.about }}</pre>
+<h2 style="margin: 20px 0;">{{ user.surname }} {{ user.name }}</h2>
+        </div>
+<h2 style="margin: 20px 0;">ID: {{ user.id }}</h2>
+<h2 style="margin: 20px 0;">Email: {{ user.email }}</h2>
+<h2 style="margin: 20px 0;">О себе: </h2>
+<div
+        style="margin-bottom: 20px; background-color: white; border-radius: 20px; padding: 10px 10px; ">
+<pre style="font-size: 16pt;">{{ user.about }}</pre>
+</div>
 
 {% if not is_cur_user and not is_subscribed %}
 <a class="btn btn-primary" href="/users/{{ user.id }}/subscribe">
@@ -18,30 +24,49 @@
     Отписаться</a>
 {% endif %}
 <a class="btn btn-primary p-1" href="/posts/users/{{ user.id }}">Посмотреть посты</a>
+
 <h3>Подписки</h3>
-<table class="table table-bordered">
+<table width="100%" class="table table-bordered" style="color: white; font-size: 14pt;">
+
+    <tr class="bg-primary" style="font-size: 18pt; font-weight:bold;">
+        <td>Фамилия и имя</td>
+        <td>Email</td>
+        <td>Посты</td>
+    </tr>
     {% for user1 in user.followed %}
-    <tr>
-        <td>
-            <a href="/users/{{ user1.id }}">{{ user1.surname }} {{ user1.name }}</a>
-        </td>
-        <td>
-            <a href="/posts/users/{{ user1.id }}">Посмотреть его посты</a>
-        </td>
+    <tr class="bg-primary">
+                <td><img alt="Профиль пользователя" width="50px" height="50px"
+                                 src="{{url_for('static', filename='img/users/') + user1.icon}}"
+                                 style="border-radius: 50%;">
+        <a href="/users/{{ user1.id }}"
+        style="color: white;">{{ user1.surname }} {{ user1.name }}</a></td>
+        <td>{{ user1.email }}</td>
+        <td><a href="/posts/users/{{ user1.id }}" style="color: white;">Посмотреть его посты ({{
+           user1.posts | length }})</a></td>
     </tr>
     {% endfor %}
 </table>
+
 <h3>Подписчики</h3>
-<table class="table table-bordered">
+<table width="100%" class="table table-bordered" style="color: white; font-size: 14pt;">
+
+    <tr class="bg-primary" style="font-size: 18pt; font-weight:bold;">
+        <td>Фамилия и имя</td>
+        <td>Email</td>
+        <td>Посты</td>
+    </tr>
     {% for user1 in user.subscribed %}
-    <tr>
-        <td>
-            <a href="/users/{{ user1.id }}">{{ user1.surname }} {{ user1.name }}</a>
-        </td>
-        <td>
-            <a href="/posts/users/{{ user1.id }}">Посмотреть его посты</a>
-        </td>
+    <tr class="bg-primary">
+                <td><img alt="Профиль пользователя" width="50px" height="50px"
+                                 src="{{url_for('static', filename='img/users/') + user1.icon}}"
+                                 style="border-radius: 50%;">
+        <a href="/users/{{ user1.id }}"
+        style="color: white;">{{ user1.surname }} {{ user1.name }}</a></td>
+        <td>{{ user1.email }}</td>
+        <td><a href="/posts/users/{{ user1.id }}" style="color: white;">Посмотреть его посты ({{
+           user1.posts | length }})</a></td>
     </tr>
     {% endfor %}
 </table>
+
 {% endblock %}
