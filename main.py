@@ -260,16 +260,7 @@ def about_user():
                            title='Личный кабинет', reg=False, form=form)
 
 
-# # работа с постами
-# @app.route("/posts")
-# @login_required
-# def posts_current_user():
-#     db_sess = db_session.create_session()
-#     posts = db_sess.query(Post).filter(Post.author == current_user)[::-1]
-#
-#     return render_template("index.html", title='Мои посты', posts=posts)
-
-
+# работа с постами
 @app.route("/posts/categories/<string:category>")
 def post_by_category(category):
     db_sess = db_session.create_session()
@@ -586,4 +577,4 @@ if __name__ == '__main__':
 
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-    # app.run()
+    # app.run(debug=True)
