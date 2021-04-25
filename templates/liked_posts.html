@@ -11,7 +11,7 @@
 
                 <img class="card_img"
                      src="{{ url_for('static', filename='img/thumbnails/') + post.icon
-                        }}"
+                            }}"
                      alt="Картинка поста!">
                 {% for category in post.categories %}
                 <a href="/posts/categories/{{ category.name }}">
@@ -26,15 +26,21 @@
                     </h3>
                 </a>
                 <div class="mb-1 text-muted">{{ post.created_date.strftime('%e
-                    %b') }}
+                    %b %Y') }}
                 </div>
                 <p class="card-text mb-auto">{{ post.content[:30] }}...</p>
-                <a href="/posts/{{ post.id }}">Continue reading</a>
+    <a href="/posts/{{ post.id }}" class="btn btn-primary" style="margin-top: 20px;">Читать</a>
                 {% if current_user.is_authenticated and post.author_id ==
                 current_user.id %}
-                <a href="/posts/edit/{{ post.id }}" class="btn btn-warning">Редактировать
-                    новость</a>
+                <a href="/posts/edit/{{ post.id }}" class="btn btn-warning" style="margin: 10px 0px;">
+                    Редактировать</a>
+                <a href="/posts/delete/{{ post.id }}" class="btn btn-danger">
+                    Удалить
+                </a>
                 {% endif %}
+                 <strong class="d-inline-block mb-2 text-primary" style="margin-top: 15px;">
+                        Комментарии: {{ post.comments | length }}
+                  </strong>
             </div>
         </div>
 

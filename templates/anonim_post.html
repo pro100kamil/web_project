@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>{{ post.title }}</h3>
-<pre>{{ post.content }}</pre>
+<h4 style="text-align: center; margin-bottom: 10px;" class="text-muted">Анонимный пост</h4>
+    <h2 style="text-align: center; margin-bottom: 20px;">{{ post.title }}</h2>
+    <div style="background-color: white; border-radius: 20px; padding: 10px 10px; font-size: 16pt;">
+    <pre style="font-size: 16pt;">{{ post.content }}</pre></div>
 {% endblock %}

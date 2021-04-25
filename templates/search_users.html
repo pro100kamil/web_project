@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<div style="font-size: 14pt;">
 <form action="" method="post" class="form-inline pb-2">
     <input name="for_search" class="form-control m-2" value="{{ last_query }}">
 
@@ -15,23 +15,27 @@
            value="Поиск">
 </form>
 {% if users %}
-<table width="100%" class="table table-bordered">
+<table width="100%" class="table table-bordered" style="color: white;">
 
-    <tr class="table-secondary">
-        <td>id</td>
+    <tr class="bg-primary" style="font-size: 18pt; font-weight:bold;">
+        <td>ID</td>
         <td>Фамилия и имя</td>
-        <td>email</td>
-        <td>Дополнительная информация</td>
-        <td>Количество постов</td>
+        <td>Email</td>
+        <td>Посты</td>
     </tr>
     {% for user in users %}
-    <tr>
+    <tr class="bg-primary">
         <td>{{ user.id }}</td>
-        <td><a href="/users/{{ user.id }}">{{ user.surname }} {{ user.name
-            }}</a></td>
+                <td><img alt="Профиль пользователя" width="50px" height="50px"
+                                 src="{{url_for('static', filename='img/users/') + user.icon}}"
+                                 style="border-radius: 50%;
+                            margin-right: 20px; display: inline-block;">
+<a href="/users/{{ user.id }}"
+   style="color: white; display: inline-block;">{{ user.surname }} {{ user.name }}</a></td>
         <td>{{ user.email }}</td>
-        <td>{{ user.about }}</td>
-        <td><a href="/posts/users/{{ user.id }}">Посмотреть его посты</a></td>
+        <td><a href="/posts/users/{{ user.id }}" style="color: white;">Посмотреть его посты ({{
+
+           user.posts | length }})</a></td>
     </tr>
     {% endfor %}
 </table>
@@ -39,7 +43,7 @@
 {% else %}
 <p class="text-danger text-center">Ничего не найдено!</p>
 {% endif %}
-<nav aria-label="Page navigation example" style="font-size: 25pt;">
+<nav aria-label="Page navigation example" style="font-size: 18pt;">
     <ul class="pagination">
         <li class="page-item"><a class="page-link"
                                  href="{{ prev_url }}">Previous</a>
@@ -53,6 +57,7 @@
                                  href="{{ next_url }}">Next</a></li>
     </ul>
 </nav>
+</div>
 
 
 {% endblock %}
