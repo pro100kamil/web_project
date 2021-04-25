@@ -1,7 +1,8 @@
 import hashlib
 import uuid
 
-from flask import Flask, render_template, redirect, abort, request, url_for, render_template_string
+from flask import Flask, render_template, redirect, abort, request, url_for, \
+    render_template_string
 from flask_login import LoginManager, login_user, current_user, logout_user, \
     login_required
 
@@ -63,6 +64,11 @@ def index():
 @app.route("/about")
 def about():
     return render_template("about.html", title='О сайте')
+
+
+@app.route("/api")
+def api_description():
+    return render_template("api_description.html", title='Описание api')
 
 
 @app.route("/liked")
@@ -321,7 +327,8 @@ def show_post(post_id):
         comments = post.comments
         reply_id = request.args.get('reply_to')
         html_code = functions.reformat_comments(comments, reply_id=reply_id)
-        rendered_html_code = render_template_string(html_code, form=second_form)
+        rendered_html_code = render_template_string(html_code,
+                                                    form=second_form)
 
         return render_template('post.html', title=post.title,
                                post=post, like=post.is_like(current_user),
@@ -550,7 +557,8 @@ def search():
                                                    f'%{line}%'))).all()
             users = users[(page - 1) * max_results:page * max_results + 1]
             return render_template('search_users.html', users=users,
-                                   title='Поиск пользователя: ' + line, **params)
+                                   title='Поиск пользователя: ' + line,
+                                   **params)
 
         elif kind == 'posts':
             posts = db_sess.query(Post).filter(
@@ -574,4 +582,7 @@ if __name__ == '__main__':
     db_session.global_init("db/data.db")
     app.register_blueprint(users_api.blueprint)
     app.register_blueprint(posts_api.blueprint)
-    app.run()
+
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+    # app.run()
