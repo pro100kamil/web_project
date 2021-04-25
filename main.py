@@ -83,12 +83,12 @@ def liked_posts():
                            title='Понравившиеся посты', posts=posts)
 
 
-@app.route('/tg')
-def show_tg_news():
-    ch_name = 'tbite'
-    return render_template('tg_posts.html',
-                           title='Новости',
-                           urls=tg.latest_news(ch_name))
+# @app.route('/tg')
+# def show_tg_news():
+#     ch_name = 'tbite'
+#     return render_template('tg_posts.html',
+#                            title='Новости',
+#                            urls=tg.latest_news(ch_name))
 
 
 @app.route('/news')
