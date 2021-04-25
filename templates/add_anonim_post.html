@@ -1,22 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{ title }}</h2>
-<p>Это анонимный пост, он не будет отображаться на сайте.</p>
+<h2 style="text-align: center;">{{ title }}</h2>
+<p style="color: red; text-align: center; font-size: 16pt;">Это анонимный пост, он не будет
+    отображаться на сайте.</p>
 <form action="" method="post" enctype="multipart/form-data" class="login_form">
     {{ form.hidden_tag() }}
     <p>
-        {{ form.title.label }}<br>
+    <span class="add_edit_form">{{ form.title.label }}</span><br>
         {{ form.title(class="form-control") }}<br>
         {% for error in form.title.errors %}
-            <p class="alert alert-danger" role="alert">
+            <p content="alert alert-danger" role="alert">
                 {{ error }}
             </p>
         {% endfor %}
     </p>
     <p>
-        {{ form.content.label }}<br>
-        {{ form.content(class="form-control") }}<br>
+        <span class="add_edit_form">{{ form.content.label }}</span><br>
+        {{ form.content(class="form-control-file") }}<br>
         {% for error in form.content.errors %}
             <p content="alert alert-danger" role="alert">
                 {{ error }}
