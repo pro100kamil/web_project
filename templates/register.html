@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{ title }}</h2>
+<h2 style="text-align: center;">{{ title }}</h2>
 
 <form action="" method="post" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     {% for field in [form.name, form.surname, form.about] %}
     <p>
-        {{ field.label }}<br>
+        <span class="add_edit_form">{{ field.label }}</span><br>
         {{ field(class="form-control") }}
         {% for error in field.errors %}
     <p class="alert alert-danger" role="alert">
@@ -17,7 +17,7 @@
     </p>
     {% endfor %}
     <p>
-        {{ form.email.label }}<br>
+        <span class="add_edit_form">{{ form.email.label }}</span><br>
         {{ form.email(class="form-control", type="email") }}<br>
         {% for error in form.email.errors %}
     <p class="alert alert-danger" role="alert">
@@ -26,7 +26,7 @@
     {% endfor %}
     </p>
     <p>
-        {{ form.icon.label }}<br>
+        <span class="add_edit_form">{{ form.icon.label }}</span><br>
         {{ form.icon(class="form-control-file") }}<br>
         {% for error in form.icon.errors %}
             <p content="alert alert-danger" role="alert">
@@ -37,7 +37,7 @@
     {% if reg %}
     {% for field in [form.password, form.password_again] %}
     <p>
-        {{ field.label }}<br>
+        <span class="add_edit_form">{{ field.label }}</span><br>
         {{ field(class="form-control", type="password") }}<br>
         {% for error in field.errors %}
     <p class="alert alert-danger" role="alert">

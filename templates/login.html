@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Authorization</h2>
+<h2 style="text-align: center;">{{ title }}</h2>
 <form action="" method="post">
     {{ form.hidden_tag() }}
     <p>
-        {{ form.email.label }}<br>
+        <span class="add_edit_form">{{ form.email.label }}</span><br>
         {{ form.email(class="form-control", type="email") }}<br>
         {% for error in form.email.errors %}
     <div class="alert alert-danger" role="alert">
@@ -14,7 +14,7 @@
     {% endfor %}
     </p>
     <p>
-        {{ form.password.label }}<br>
+        <span class="add_edit_form">{{ form.password.label }}</span><br>
         {{ form.password(class="form-control", type="password") }}<br>
         {% for error in form.password.errors %}
     <div class="alert alert-danger" role="alert">
@@ -22,7 +22,7 @@
     </div>
     {% endfor %}
     </p>
-    <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+    <p>{{ form.remember_me() }} <span class="add_edit_form">{{ form.remember_me.label }}</span></p>
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     <p class="text-danger text-center">{{ message }}</p>
 </form>

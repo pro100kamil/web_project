@@ -3,10 +3,10 @@ from .comments import Comment
 from flask import url_for
 
 HTML_COMMENTS = '''<div class="mar-btm">
- <a href="/users/{user_id}" class="btn-link text-semibold media-heading box-inline">{username}</a>
+ <a href="/users/{user_id}" style="font-size: 16pt;" class="btn-link text-semibold media-heading box-inline">{username}</a>
  <p class="text-muted text-sm"><i class="fa fa-mobile fa-lg"></i>{date}</p>
  </div>
- <p>{text}</p>
+ <p style="font-size: 14pt;">{text}</p>
  <div class="pad-ver">
  <a class="btn btn-sm btn-default btn-hover-primary btn-outline-info" href="{url}">Ответить</a>
  </div>
