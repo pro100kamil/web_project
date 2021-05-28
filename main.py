@@ -202,16 +202,16 @@ def register():
         user.name = form.name.data
         user.about = form.about.data
         user.set_password(form.password.data)
+
         if form.icon.data:
             # если прикреплённый файл является изображением
             if form.icon.data.content_type.startswith('image'):
-                user.icon = f'user{len(db_sess.query(User).all())}.jpg'
+                user.icon = f'user_{uuid.uuid4().hex}.jpg'
                 form.icon.data.save(f'static/img/users/{user.icon}')
             else:
                 return render_template('register.html', title='Регистрация',
                                        form=form, reg=True,
                                        message="Надо прекреплять изображение")
-
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
@@ -251,7 +251,11 @@ def about_user():
         if form.icon.data:
             # если прикреплённый файл является изображением
             if form.icon.data.content_type.startswith('image'):
-                user.icon = f'user{user.id}.jpg'
+                try:
+                    os.remove(os.path.join('static/img/users/', user.icon))
+                except FileNotFoundError:
+                    pass
+                user.icon = f'user_{uuid.uuid4().hex}.jpg'
                 form.icon.data.save(f'static/img/users/{user.icon}')
             else:
                 return render_template('register.html', title='Личный кабинет',
@@ -380,8 +384,7 @@ def create_post():
         post.author_id = current_user.id
 
         path = 'static/img/thumbnails'
-        num_images = len(os.listdir(path)) - 1
-        filename = f'post_{num_images}.jpg'
+        filename = f'post_{uuid.uuid4().hex}.jpg'
 
         if form.icon.data:
             # если прикреплённый файл является изображением
@@ -447,8 +450,7 @@ def edit_post(id):
             post.add_categories(categories)
 
         path = 'static/img/thumbnails'
-        num_images = len(os.listdir(path)) - 1
-        filename = f'post_{num_images}.jpg'
+        filename = f'post_{uuid.uuid4().hex}.jpg'
 
         if form.icon.data:
             # если прикреплённый файл является изображением
@@ -456,6 +458,11 @@ def edit_post(id):
                 image: Image.Image = Image.open(form.icon.data)
                 image.thumbnail((350, 350))
                 image = image.convert('RGB')
+                try:
+                    os.remove(os.path.join(path, post.icon))
+                except FileNotFoundError:
+                    pass
+
                 image.save(os.path.join(path, filename))
                 post.icon = filename
             else:
@@ -514,6 +521,11 @@ def post_delete(id):
                                       Post.author == current_user
                                       ).first()
     if post:
+        try:
+            os.remove(os.path.join('static/img/thumbnails/', post.icon))
+        except FileNotFoundError:
+            pass
+
         db_sess.delete(post)
         db_sess.commit()
     else:
@@ -585,7 +597,6 @@ if __name__ == '__main__':
     app.register_blueprint(users_api.blueprint)
     app.register_blueprint(posts_api.blueprint)
 
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
 
-    # app.run(host='127.0.0.1', port=5000)  # локальный запуск
+
+    app.run(host='127.0.0.1', port=5000)  # локальный запуск
